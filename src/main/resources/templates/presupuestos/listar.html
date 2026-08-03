@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Presupuestos por categoría</span>
+            <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <form th:action="@{/presupuestos}" method="get" style="display:flex;gap:6px;align-items:center;">
+                    <input type="month" name="periodo" th:value="${periodoFiltro}"
+                           style="padding:7px 10px;border:1px solid #dce2ea;border-radius:6px;">
+                    <button class="btn btn-outline" type="submit">Filtrar</button>
+                </form>
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/presupuestos/nuevo}">+ Nuevo presupuesto</a>
+            </span>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Categoría</th>
+                    <th>Periodo</th>
+                    <th>Presupuestado</th>
+                    <th>Gasto real</th>
+                    <th>Disponible</th>
+                    <th>Uso</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${presupuestos}">
+                    <td><strong th:text="${p.categoria}">categoría</strong></td>
+                    <td th:text="${p.periodo}">2026-08</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(p.monto, 1, 2)}">C$ 0.00</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(p.gastoReal, 1, 2)}">C$ 0.00</td>
+                    <td class="moneda"
+                        th:style="'color:' + (${p.disponible >= 0} ? 'var(--verde)' : 'var(--rojo)') + ';'"
+                        th:text="'C$ ' + ${#numbers.formatDecimal(p.disponible, 1, 2)}">C$ 0.00</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="flex:1;min-width:70px;background:#e2e8f0;border-radius:4px;height:8px;">
+                                <div th:style="'width:' + (${p.porcentajeUsado > 100} ? 100 : ${p.porcentajeUsado}) + '%;height:8px;border-radius:4px;background:' + (${p.porcentajeUsado > 100} ? 'var(--rojo)' : (${p.porcentajeUsado > 80} ? 'var(--amarillo)' : 'var(--verde)')) + ';'"></div>
+                            </div>
+                            <span th:text="${p.porcentajeUsado} + '%'">0%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/presupuestos/eliminar/{id}(id=${p.id})}" method="post"
+                              style="display:inline;" data-confirm="¿Eliminar este presupuesto?">
+                            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${presupuestos.isEmpty()}">
+                    <td colspan="7" style="text-align:center;color:#718096;padding:20px;">
+                        No hay presupuestos registrados.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

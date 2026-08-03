@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel" style="max-width:640px;">
+        <div class="panel-head">Registrar movimiento de caja</div>
+        <div class="panel-body">
+            <form th:action="@{/caja/guardar}" th:object="${movimiento}" method="post">
+                <div class="form-grid">
+                    <div class="campo">
+                        <label for="tipo">Tipo</label>
+                        <select id="tipo" th:field="*{tipo}" required>
+                            <option value="INGRESO">Ingreso</option>
+                            <option value="EGRESO">Egreso</option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label for="fecha">Fecha</label>
+                        <input type="date" id="fecha" th:field="*{fecha}" required>
+                    </div>
+                    <div class="campo">
+                        <label for="categoria">Categoría</label>
+                        <select id="categoria" th:field="*{categoria}" required>
+                            <option value="VENTAS">Ventas</option>
+                            <option value="OTROS INGRESOS">Otros ingresos</option>
+                            <option value="SALARIOS">Salarios</option>
+                            <option value="INSUMOS">Insumos y materiales</option>
+                            <option value="SERVICIOS">Servicios</option>
+                            <option value="ALQUILER">Alquiler</option>
+                            <option value="IMPUESTOS">Impuestos</option>
+                            <option value="TRANSPORTE">Transporte</option>
+                            <option value="OTROS EGRESOS">Otros egresos</option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label for="monto">Monto (C$)</label>
+                        <input type="number" id="monto" th:field="*{monto}" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="campo" style="grid-column:1 / -1;">
+                        <label for="descripcion">Descripción</label>
+                        <input type="text" id="descripcion" th:field="*{descripcion}"
+                               placeholder="Ej: Venta de producción, compra de materia prima...">
+                    </div>
+                    <div class="campo" style="grid-column:1 / -1;">
+                        <label for="observacion">Observación</label>
+                        <textarea id="observacion" th:field="*{observacion}" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="form-acciones">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline" th:href="@{/caja}">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

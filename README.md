@@ -18,6 +18,10 @@ Desarrollada con **Spring Boot**, **Thymeleaf**, **Spring Security**, **JPA/Hibe
 - **Préstamos**: registro de préstamos por empleado, abonos manuales, liquidación y descuento automático de la cuota en la nómina.
 - **Usuarios y permisos**: roles Administrador / Solo lectura, bloqueo por intentos fallidos, forzar cambio de contraseña y expiración.
 - **Contabilidad**: cálculo de pago mensual estimado, INSS laboral y patronal, vacaciones, aguinaldo e indemnización.
+- **Caja**: registro de ingresos y egresos por categoría, con filtro por mes, saldo del mes y saldo acumulado.
+- **Cuentas por pagar**: control de deudas con proveedores, total pendiente, vencimientos y marcado de pago.
+- **Presupuestos**: presupuesto mensual por categoría con cruce automático contra los egresos reales de caja (disponible y % de uso).
+- **Estado de resultados**: resumen financiero del mes (ingresos - egresos - nómina) y desglose por categoría.
 - **Dashboard**: indicadores y gráficos de total pagado por nómina y empleados activos por departamento.
 - **Reportes**: exportación a **Excel** y **PDF** de empleados, nóminas, recibos individuales y asistencia por periodo.
 - **Respaldos**: copias de seguridad de la base de datos (`VACUUM INTO`) con descarga desde la interfaz.
@@ -109,6 +113,10 @@ La base de datos se crea automáticamente en `data/fabrica.db`. Los respaldos se
 | Préstamos | `/prestamos` |
 | Liquidaciones | `/liquidaciones` |
 | Contabilidad | `/contabilidad` |
+| Caja | `/caja` |
+| Cuentas por pagar | `/cuentas-pagar` |
+| Presupuestos | `/presupuestos` |
+| Estado de resultados | `/finanzas` |
 | Reportes | `/reportes` |
 | Asistencia (reporte) | `/reportes/asistencia` |
 | Usuarios | `/usuarios` |

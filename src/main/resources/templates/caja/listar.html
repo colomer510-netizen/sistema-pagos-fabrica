@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Caja / flujo de caja</span>
+            <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <form th:action="@{/caja}" method="get" style="display:flex;gap:6px;align-items:center;">
+                    <input type="month" name="mes" th:value="${mes}"
+                           style="padding:7px 10px;border:1px solid #dce2ea;border-radius:6px;">
+                    <button class="btn btn-outline" type="submit">Filtrar</button>
+                </form>
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/caja/nuevo}">+ Registrar movimiento</a>
+            </span>
+        </div>
+        <div class="panel-body">
+            <div class="grid-cards" style="margin-bottom:16px;">
+                <div class="card">
+                    <div class="card-titulo">Ingresos del mes</div>
+                    <div class="card-valor" style="color:var(--verde);"
+                         th:text="'C$ ' + ${#numbers.formatDecimal(ingresos, 1, 2)}">C$ 0.00</div>
+                    <div class="card-sub" th:text="${mes}">mes</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Egresos del mes</div>
+                    <div class="card-valor" style="color:var(--rojo);"
+                         th:text="'C$ ' + ${#numbers.formatDecimal(egresos, 1, 2)}">C$ 0.00</div>
+                    <div class="card-sub" th:text="${mes}">mes</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Saldo del mes</div>
+                    <div class="card-valor"
+                         th:style="'color:' + (${saldoMes >= 0} ? 'var(--verde)' : 'var(--rojo)') + ';'"
+                         th:text="'C$ ' + ${#numbers.formatDecimal(saldoMes, 1, 2)}">C$ 0.00</div>
+                    <div class="card-sub">ingresos - egresos</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Saldo acumulado</div>
+                    <div class="card-valor"
+                         th:style="'color:' + (${saldoAcumulado >= 0} ? 'var(--verde)' : 'var(--rojo)') + ';'"
+                         th:text="'C$ ' + ${#numbers.formatDecimal(saldoAcumulado, 1, 2)}">C$ 0.00</div>
+                    <div class="card-sub">histórico total</div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Categoría</th>
+                    <th>Descripción</th>
+                    <th>Monto</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="m : ${movimientos}">
+                    <td th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy')}">fecha</td>
+                    <td>
+                        <span class="badge" th:classappend="${m.tipo == 'INGRESO'} ? 'badge-activo' : 'badge-inactivo'"
+                              th:text="${m.tipo}">INGRESO</span>
+                    </td>
+                    <td th:text="${m.categoria}">categoría</td>
+                    <td th:text="${m.descripcion} ?: '-'">-</td>
+                    <td class="moneda" th:text="((${m.tipo == 'INGRESO'}) ? '+' : '-') + ' C$ ' + ${#numbers.formatDecimal(m.monto, 1, 2)}">C$ 0.00</td>
+                    <td>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/caja/eliminar/{id}(id=${m.id})}" method="post"
+                              style="display:inline;" data-confirm="¿Eliminar este movimiento?">
+                            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${movimientos.isEmpty()}">
+                    <td colspan="6" style="text-align:center;color:#718096;padding:20px;">
+                        No hay movimientos en el periodo seleccionado.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

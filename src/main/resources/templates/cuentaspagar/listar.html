@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Cuentas por pagar</span>
+            <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <form th:action="@{/cuentas-pagar}" method="get" style="display:flex;gap:6px;align-items:center;">
+                    <select name="estado" style="padding:7px 10px;border:1px solid #dce2ea;border-radius:6px;">
+                        <option value="">Todas</option>
+                        <option value="PENDIENTE" th:selected="${estadoFiltro == 'PENDIENTE'}">Pendientes</option>
+                        <option value="PAGADA" th:selected="${estadoFiltro == 'PAGADA'}">Pagadas</option>
+                    </select>
+                    <button class="btn btn-outline" type="submit">Filtrar</button>
+                </form>
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/cuentas-pagar/nuevo}">+ Nueva cuenta</a>
+            </span>
+        </div>
+        <div class="panel-body">
+            <div class="grid-cards" style="margin-bottom:16px;">
+                <div class="card">
+                    <div class="card-titulo">Total pendiente por pagar</div>
+                    <div class="card-valor" style="color:var(--rojo);"
+                         th:text="'C$ ' + ${#numbers.formatDecimal(totalPendiente, 1, 2)}">C$ 0.00</div>
+                    <div class="card-sub">obligaciones sin pagar</div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Proveedor</th>
+                    <th>Concepto</th>
+                    <th>Monto</th>
+                    <th>Factura</th>
+                    <th>Vencimiento</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${cuentas}">
+                    <td><strong th:text="${c.proveedor}">proveedor</strong></td>
+                    <td th:text="${c.concepto} ?: '-'">-</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(c.monto, 1, 2)}">C$ 0.00</td>
+                    <td th:text="${#temporals.format(c.fechaFactura, 'dd/MM/yyyy')}">fecha</td>
+                    <td th:text="${#temporals.format(c.fechaVencimiento, 'dd/MM/yyyy')}">fecha</td>
+                    <td>
+                        <span class="badge" th:classappend="${c.estado == 'PENDIENTE'} ? 'badge-peligro' : 'badge-activo'"
+                              th:text="${c.estado}">PENDIENTE</span>
+                    </td>
+                    <td>
+                        <form sec:authorize="hasRole('ADMIN')" th:if="${c.estado == 'PENDIENTE'}"
+                              th:action="@{/cuentas-pagar/marcar-pagada/{id}(id=${c.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-outline btn-sm" type="submit">Marcar pagada</button>
+                        </form>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/cuentas-pagar/eliminar/{id}(id=${c.id})}" method="post"
+                              style="display:inline;" data-confirm="¿Eliminar esta cuenta?">
+                            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${cuentas.isEmpty()}">
+                    <td colspan="7" style="text-align:center;color:#718096;padding:20px;">
+                        No hay cuentas por pagar registradas.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

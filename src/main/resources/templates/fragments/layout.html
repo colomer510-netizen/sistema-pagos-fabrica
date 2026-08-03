@@ -21,6 +21,10 @@
             <a th:href="@{/nomina}" th:classappend="${#strings.startsWith(requestUri, '/nomina')} ? 'activo'">Nómina</a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/deducciones}" th:classappend="${#strings.startsWith(requestUri, '/deducciones')} ? 'activo'">Deducciones</a>
             <a th:href="@{/contabilidad}" th:classappend="${#strings.startsWith(requestUri, '/contabilidad')} ? 'activo'">Contabilidad</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/caja}" th:classappend="${#strings.startsWith(requestUri, '/caja')} ? 'activo'">Caja</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/cuentas-pagar}" th:classappend="${#strings.startsWith(requestUri, '/cuentas-pagar')} ? 'activo'">Cuentas por pagar</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/presupuestos}" th:classappend="${#strings.startsWith(requestUri, '/presupuestos')} ? 'activo'">Presupuestos</a>
+            <a th:href="@{/finanzas}" th:classappend="${#strings.startsWith(requestUri, '/finanzas')} ? 'activo'">Estado de resultados</a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/prestamos}" th:classappend="${#strings.startsWith(requestUri, '/prestamos')} ? 'activo'">Préstamos</a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/liquidaciones}" th:classappend="${#strings.startsWith(requestUri, '/liquidaciones')} ? 'activo'">Liquidaciones</a>
             <a th:href="@{/reportes}" th:classappend="${#strings.startsWith(requestUri, '/reportes')} ? 'activo'">Reportes</a>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Estado de resultados</span>
+            <form th:action="@{/finanzas}" method="get" style="display:flex;gap:6px;align-items:center;">
+                <input type="month" name="mes" th:value="${mes}"
+                       style="padding:7px 10px;border:1px solid #dce2ea;border-radius:6px;">
+                <button class="btn btn-outline" type="submit">Consultar</button>
+            </form>
+        </div>
+        <div class="panel-body">
+            <div class="grid-cards" style="margin-bottom:16px;">
+                <div class="card">
+                    <div class="card-titulo">Ingresos del mes</div>
+                    <div class="card-valor" style="color:var(--verde);"
+                         th:text="'C$ ' + ${#numbers.formatDecimal(ingresos, 1, 2)}">C$ 0.00</div>
+                    <div class="card-sub" th:text="'Flujo de caja - ' + ${mes}">mes</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Egresos del mes</div>
+                    <div class="card-valor" style="color:var(--rojo);"
+                         th:text="'C$ ' + ${#numbers.formatDecimal(egresos, 1, 2)}">C$ 0.00</div>
+                    <div class="card-sub" th:text="'Flujo de caja - ' + ${mes}">mes</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Nómina del mes</div>
+                    <div class="card-valor" style="color:var(--rojo);"
+                         th:text="'C$ ' + ${#numbers.formatDecimal(nomina, 1, 2)}">C$ 0.00</div>
+                    <div class="card-sub">total pagado en el periodo</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Resultado del mes</div>
+                    <div class="card-valor"
+                         th:style="'color:' + (${resultado >= 0} ? 'var(--verde)' : 'var(--rojo)') + ';'"
+                         th:text="'C$ ' + ${#numbers.formatDecimal(resultado, 1, 2)}">C$ 0.00</div>
+                    <div class="card-sub">ingresos - egresos - nómina</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-cards grid-graficos" style="margin-top:16px;">
+        <div class="panel">
+            <div class="panel-head">Ingresos por categoría</div>
+            <div class="panel-body" style="padding:0;">
+                <table class="tabla">
+                    <tbody>
+                    <tr th:each="fila : ${ingresosPorCategoria}">
+                        <th style="width:70%;" th:text="${fila[0]}">categoría</th>
+                        <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(fila[1], 1, 2)}">C$ 0.00</td>
+                    </tr>
+                    <tr th:if="${ingresosPorCategoria.isEmpty()}">
+                        <td colspan="2" style="text-align:center;color:#718096;padding:16px;">Sin ingresos registrados</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-head">Egresos por categoría</div>
+            <div class="panel-body" style="padding:0;">
+                <table class="tabla">
+                    <tbody>
+                    <tr th:each="fila : ${egresosPorCategoria}">
+                        <th style="width:70%;" th:text="${fila[0]}">categoría</th>
+                        <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(fila[1], 1, 2)}">C$ 0.00</td>
+                    </tr>
+                    <tr th:if="${egresosPorCategoria.isEmpty()}">
+                        <td colspan="2" style="text-align:center;color:#718096;padding:16px;">Sin egresos registrados</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

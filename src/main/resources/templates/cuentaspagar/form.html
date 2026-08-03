@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel" style="max-width:640px;">
+        <div class="panel-head">Nueva cuenta por pagar</div>
+        <div class="panel-body">
+            <form th:action="@{/cuentas-pagar/guardar}" th:object="${cuenta}" method="post">
+                <div class="form-grid">
+                    <div class="campo">
+                        <label for="proveedor">Proveedor</label>
+                        <input type="text" id="proveedor" th:field="*{proveedor}" required
+                               placeholder="Ej: Distribuidora X, Energía S.A.">
+                    </div>
+                    <div class="campo">
+                        <label for="concepto">Concepto</label>
+                        <input type="text" id="concepto" th:field="*{concepto}"
+                               placeholder="Ej: Suministro de materia prima, factura de energía">
+                    </div>
+                    <div class="campo">
+                        <label for="monto">Monto (C$)</label>
+                        <input type="number" id="monto" th:field="*{monto}" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="campo">
+                        <label for="fechaFactura">Fecha de factura</label>
+                        <input type="date" id="fechaFactura" th:field="*{fechaFactura}" required>
+                    </div>
+                    <div class="campo">
+                        <label for="fechaVencimiento">Fecha de vencimiento</label>
+                        <input type="date" id="fechaVencimiento" th:field="*{fechaVencimiento}" required>
+                    </div>
+                </div>
+                <div class="form-acciones">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline" th:href="@{/cuentas-pagar}">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
