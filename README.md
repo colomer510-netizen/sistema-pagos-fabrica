@@ -141,7 +141,25 @@ src/main/resources/
 ├── templates/       # Plantillas Thymeleaf
 ├── static/          # CSS y JavaScript
 └── application.properties
+
+src/test/
+├── java/com/fabrica/pagos/
+│   ├── security/    # Pruebas de seguridad (login, roles, CSRF, bloqueo)
+│   └── service/     # Pruebas unitarias de lógica de negocio
+└── resources/       # Configuración para tests (BD temporal en target/test-fabrica.db)
 ```
+
+## Pruebas
+
+```bash
+mvn test
+```
+
+Las pruebas ejecutan con una base de datos SQLite temporal en `target/test-fabrica.db` (la semilla de datos está desactivada). Cobertura actual:
+
+- **ContabilidadServiceTest** (unitario): salario bruto, INSS laboral (7 %) y patronal (22.5 %), IR (2 %), salario neto, vacaciones, aguinaldo e indemnización.
+- **LiquidacionServiceTest** (unitario con Mockito): vacaciones pendientes, indemnización solo en despido, resta de días aprobados usados y suma de otros montos.
+- **SeguridadTest** (integración con MockMvc): redirección de anónimos al login, login correcto/incorrecto, acceso de roles (`ADMIN` vs `LECTOR`), exigencia de CSRF y bloqueo tras 5 intentos fallidos.
 
 ## Notas
 
