@@ -8,4 +8,8 @@ import java.util.List;
 public interface DeduccionConfigRepository extends JpaRepository<DeduccionConfig, Long> {
 
     List<DeduccionConfig> findByActivaTrueOrderByNombreAsc();
+
+    List<DeduccionConfig> findAllByOrderByNombreAsc();
+
+    List<DeduccionConfig> findByNombreContainingIgnoreCase(String nombre);
 }

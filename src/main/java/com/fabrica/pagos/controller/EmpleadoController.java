@@ -4,13 +4,18 @@ import com.fabrica.pagos.model.Empleado;
 import com.fabrica.pagos.repository.EmpleadoRepository;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 @Controller
@@ -54,18 +59,29 @@ public class EmpleadoController {
     @PostMapping("/guardar")
     @PreAuthorize("hasRole('ADMIN')")
     public String guardar(@Valid @ModelAttribute Empleado empleado, BindingResult result,
+                          @RequestParam(value = "foto", required = false) MultipartFile foto,
                           RedirectAttributes redirect, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("modo", empleado.getId() == null ? "nuevo" : "editar");
             return "empleados/form";
         }
         try {
+            if (foto != null && !foto.isEmpty()) {
+                empleado.setFoto(foto.getBytes());
+            } else if (empleado.getId() != null) {
+                empleadoRepository.findById(empleado.getId())
+                        .ifPresent(anterior -> empleado.setFoto(anterior.getFoto()));
+            }
             Empleado guardado = empleadoRepository.save(empleado);
             redirect.addFlashAttribute("mensajeExito",
                     "Empleado " + guardado.getCodigo() + " " + guardado.getNombreCompleto() + " guardado correctamente");
             return "redirect:/empleados";
         } catch (DataIntegrityViolationException e) {
             model.addAttribute("errorCodigo", "El código " + empleado.getCodigo() + " ya está en uso");
+            model.addAttribute("modo", empleado.getId() == null ? "nuevo" : "editar");
+            return "empleados/form";
+        } catch (IOException e) {
+            model.addAttribute("mensajeError", "No se pudo procesar la foto");
             model.addAttribute("modo", empleado.getId() == null ? "nuevo" : "editar");
             return "empleados/form";
         }
@@ -92,6 +108,17 @@ public class EmpleadoController {
     public String detalle(@PathVariable Long id, Model model) {
         model.addAttribute("empleado", empleadoRepository.findById(id).orElseThrow());
         return "empleados/detalle";
+    }
+
+    @GetMapping("/foto/{id}")
+    public ResponseEntity<byte[]> foto(@PathVariable Long id) {
+        Empleado empleado = empleadoRepository.findById(id).orElseThrow();
+        if (empleado.getFoto() == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE)
+                .body(empleado.getFoto());
     }
 
     private String generarCodigo() {

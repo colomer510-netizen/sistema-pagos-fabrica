@@ -10,7 +10,8 @@
             <div class="alerta alerta-info">
                 La nómina suma la asistencia de cada empleado en el periodo, calcula horas
                 normales y extras (según la jornada y días laborables), aplica la deducción
-                del INSS laboral y genera un recibo por empleado.
+                del INSS laboral, deducciones configuradas y cuotas de préstamos activos.
+                Usa <strong>Vista previa</strong> para revisar el cálculo antes de generar.
             </div>
             <form th:action="@{/nomina/generar}" method="post">
                 <div class="form-grid">
@@ -24,6 +25,8 @@
                     </div>
                 </div>
                 <div class="form-acciones">
+                    <button type="submit" class="btn btn-outline"
+                            th:formaction="@{/nomina/previa}" th:formmethod="get">&#128269; Ver vista previa</button>
                     <button type="submit" class="btn btn-primary">Generar nómina</button>
                     <a class="btn btn-outline" th:href="@{/nomina}">Cancelar</a>
                 </div>

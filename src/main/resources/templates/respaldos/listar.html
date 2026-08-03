@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="alerta alerta-info">
+        Los respaldos se generan con una copia consistente de la base de datos (comando SQLite VACUUM INTO).
+        Descarga y guarda copias fuera del servidor para proteger tu información.
+    </div>
+    <div class="panel">
+        <div class="panel-head">
+            <span>Respaldos de la base de datos</span>
+            <form th:action="@{/respaldos/crear}" method="post">
+                <button class="btn btn-primary" type="submit">+ Crear respaldo ahora</button>
+            </form>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Archivo</th>
+                    <th>Tamaño</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${respaldos}">
+                    <td><strong th:text="${r.fileName}">respaldo.db</strong></td>
+                    <td th:text="${#numbers.formatDecimal(r.toFile().length() / 1024.0, 1, 1)} + ' KB'">0 KB</td>
+                    <td style="white-space:nowrap;">
+                        <a class="btn btn-outline btn-sm" th:href="@{/respaldos/descargar/{nombre}(nombre=${r.fileName})}">Descargar</a>
+                        <form th:action="@{/respaldos/eliminar/{nombre}(nombre=${r.fileName})}" method="post" style="display:inline;">
+                            <button class="btn btn-danger btn-sm" type="submit" data-confirm="¿Eliminar este respaldo?">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${respaldos.isEmpty()}">
+                    <td colspan="3" style="text-align:center;color:#718096;padding:20px;">
+                        No hay respaldos. Crea el primero pulsando el botón.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div style="padding:10px 18px;font-size:12px;color:#718096;border-top:1px solid #dce2ea;">
+                Directorio: <code th:text="${directorio}">data/backups</code>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

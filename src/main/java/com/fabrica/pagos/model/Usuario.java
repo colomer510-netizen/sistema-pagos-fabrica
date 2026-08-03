@@ -22,6 +22,9 @@ public class Usuario {
     @Column(nullable = false, length = 20)
     private String rol;
 
+    @Column
+    private Boolean activo = true;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUsername() { return username; }
@@ -32,4 +35,6 @@ public class Usuario {
     public void setNombre(String nombre) { this.nombre = nombre; }
     public String getRol() { return rol; }
     public void setRol(String rol) { this.rol = rol; }
+    public Boolean getActivo() { return activo; }
+    public void setActivo(Boolean activo) { this.activo = activo; }
 }

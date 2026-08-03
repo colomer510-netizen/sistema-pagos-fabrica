@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="alerta alerta-info">
+        Gestión de usuarios del sistema. Los usuarios <strong>ADMIN</strong> pueden administrar todo;
+        los usuarios <strong>LECTOR</strong> solo pueden consultar información.
+    </div>
+    <div class="panel">
+        <div class="panel-head">
+            <span>Usuarios del sistema</span>
+            <a class="btn btn-primary" th:href="@{/usuarios/nuevo}">+ Nuevo usuario</a>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${usuarios}">
+                    <td><strong th:text="${u.username}">usuario</strong></td>
+                    <td th:text="${u.nombre} ?: '-'">nombre</td>
+                    <td>
+                        <span class="badge" th:classappend="${u.rol == 'ADMIN'} ? 'badge-activo' : 'badge-inactivo'"
+                              th:text="${u.rol}">ROL</span>
+                    </td>
+                    <td>
+                        <span class="badge" th:classappend="${u.activo} ? 'badge-activo' : 'badge-inactivo'"
+                              th:text="${u.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                    </td>
+                    <td>
+                        <a class="btn btn-warning btn-sm" th:href="@{/usuarios/editar/{id}(id=${u.id})}">Editar</a>
+                        <form th:action="@{/usuarios/estado/{id}(id=${u.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-outline btn-sm" type="submit"
+                                    th:text="${u.activo} ? 'Desactivar' : 'Activar'">Cambiar</button>
+                        </form>
+                        <form th:action="@{/usuarios/eliminar/{id}(id=${u.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-danger btn-sm" type="submit" data-confirm="¿Eliminar este usuario?">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

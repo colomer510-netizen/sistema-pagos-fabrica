@@ -12,12 +12,15 @@ public class ContabilidadService {
 
     private final BigDecimal inssLaboral;
     private final BigDecimal inssPatronal;
+    private final BigDecimal porcentajeIr;
 
     public ContabilidadService(
             @Value("${app.contabilidad.deduccion-inss:7.0}") BigDecimal inssLaboral,
-            @Value("${app.contabilidad.deduccion-inss-patronal:22.5}") BigDecimal inssPatronal) {
+            @Value("${app.contabilidad.deduccion-inss-patronal:22.5}") BigDecimal inssPatronal,
+            @Value("${app.contabilidad.deduccion-ir:2.0}") BigDecimal porcentajeIr) {
         this.inssLaboral = inssLaboral;
         this.inssPatronal = inssPatronal;
+        this.porcentajeIr = porcentajeIr;
     }
 
     public BigDecimal getInssLaboral() { return inssLaboral; }
@@ -39,6 +42,16 @@ public class ContabilidadService {
      */
     public BigDecimal calcularInssLaboral(BigDecimal salarioBruto) {
         return salarioBruto.multiply(inssLaboral).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Impuesto sobre la renta simplificado (configurable por umbrales).
+     * Solo aplica sobre el excedente del salario bruto sobre el monto exento.
+     */
+    public BigDecimal calcularImpuestoRenta(BigDecimal salarioBruto) {
+        return salarioBruto.multiply(porcentajeIr)
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)
+                .max(BigDecimal.ZERO);
     }
 
     /**

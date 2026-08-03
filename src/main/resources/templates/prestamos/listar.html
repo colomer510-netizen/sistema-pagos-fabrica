@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="alerta alerta-info">
+        Registra préstamos a empleados. La <strong>cuota</strong> se descuenta automáticamente en cada
+        nómina mientras el préstamo esté activo y tenga saldo pendiente.
+    </div>
+    <div class="panel">
+        <div class="panel-head">
+            <span>Préstamos</span>
+            <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/prestamos/nuevo}">+ Nuevo préstamo</a>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Empleado</th>
+                    <th>Descripción</th>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                    <th>Cuota</th>
+                    <th>Saldo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${prestamos}">
+                    <td><strong th:text="${p.empleado.codigo}"></strong> <span th:text="${p.empleado.nombreCompleto}">-</span></td>
+                    <td th:text="${p.descripcion}">desc</td>
+                    <td th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy')}">fecha</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(p.monto, 1, 2)}">C$ 0.00</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(p.cuota, 1, 2)}">C$ 0.00</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(p.saldo, 1, 2)}">C$ 0.00</td>
+                    <td>
+                        <span class="badge" th:classappend="${p.activo} ? 'badge-activo' : 'badge-inactivo'"
+                              th:text="${p.activo} ? 'Activo' : 'Liquidado'">Activo</span>
+                    </td>
+                    <td style="white-space:nowrap;">
+                        <a sec:authorize="hasRole('ADMIN')" class="btn btn-warning btn-sm" th:href="@{/prestamos/editar/{id}(id=${p.id})}">Editar</a>
+                        <form th:if="${p.activo}" th:action="@{/prestamos/abonar/{id}(id=${p.id})}" method="post"
+                              style="display:inline-flex;gap:4px;align-items:center;">
+                            <input type="number" name="monto" step="0.01" min="0.01" required
+                                   placeholder="Abono" style="width:80px;padding:5px 8px;border:1px solid #dce2ea;border-radius:6px;">
+                            <button class="btn btn-outline btn-sm" type="submit">Abonar</button>
+                        </form>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/prestamos/estado/{id}(id=${p.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-outline btn-sm" type="submit"
+                                    th:text="${p.activo} ? 'Liquidar' : 'Reactivar'">Cambiar</button>
+                        </form>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/prestamos/eliminar/{id}(id=${p.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-danger btn-sm" type="submit" data-confirm="¿Eliminar este préstamo?">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${prestamos.isEmpty()}">
+                    <td colspan="8" style="text-align:center;color:#718096;padding:20px;">
+                        No hay préstamos registrados.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

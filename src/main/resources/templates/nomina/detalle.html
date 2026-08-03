@@ -41,7 +41,7 @@
                     <th>H. normales</th>
                     <th>H. extras</th>
                     <th>Salario bruto</th>
-                    <th>INSS laboral</th>
+                    <th>Deducciones</th>
                     <th>Salario neto</th>
                     <th>Recibo</th>
                 </tr>
@@ -53,7 +53,13 @@
                     <td th:text="${r.horasNormales}">0</td>
                     <td th:text="${r.horasExtras}">0</td>
                     <td th:text="'C$ ' + ${#numbers.formatDecimal(r.salarioBruto, 1, 2)}">C$ 0.00</td>
-                    <td th:text="'C$ ' + ${#numbers.formatDecimal(r.descuentoInss, 1, 2)}">C$ 0.00</td>
+                    <td style="font-size:13px;">
+                        <div th:text="'INSS: C$ ' + ${#numbers.formatDecimal(r.descuentoInss, 1, 2)}">INSS</div>
+                        <div th:each="d : ${deduccionesPorRecibo[r.id]}" class="moneda"
+                             th:text="${d.nombre} + ': C$ ' + ${#numbers.formatDecimal(d.monto, 1, 2)}">-</div>
+                        <div th:if="${r.totalDeducciones != null}" class="moneda" style="font-weight:bold;border-top:1px solid #dce2ea;margin-top:3px;padding-top:2px;"
+                             th:text="'Total: C$ ' + ${#numbers.formatDecimal(r.totalDeducciones, 1, 2)}">Total</div>
+                    </td>
                     <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(r.salarioNeto, 1, 2)}">C$ 0.00</td>
                     <td>
                         <a class="btn btn-outline btn-sm" th:href="@{/reportes/recibo/{id}.pdf(id=${r.id})}">Recibo PDF</a>

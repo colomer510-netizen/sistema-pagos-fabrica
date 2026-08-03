@@ -24,6 +24,9 @@ public class UsuarioService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+        if (Boolean.FALSE.equals(usuario.getActivo())) {
+            throw new UsernameNotFoundException("Usuario inactivo: " + username);
+        }
         return new User(
                 usuario.getUsername(),
                 usuario.getPassword(),

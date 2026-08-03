@@ -30,6 +30,50 @@
         </div>
     </div>
 
+    <div class="grid-cards grid-graficos">
+        <div class="panel">
+            <div class="panel-head">
+                <span>Total pagado por nómina (C$)</span>
+            </div>
+            <div class="panel-body" style="min-height:220px;">
+                <div th:if="${!nominasGrafico.isEmpty()}" style="display:flex;align-items:flex-end;gap:10px;height:190px;padding-top:10px;">
+                    <div th:each="n : ${nominasGrafico}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
+                        <div style="font-size:11px;color:#435a74;margin-bottom:4px;white-space:nowrap;"
+                             th:text="'C$ ' + ${#numbers.formatDecimal(totalPagadoPorNomina[n.id], 1, 0)}">0</div>
+                        <div style="width:100%;max-width:46px;background:#2f81f7;border-radius:6px 6px 0 0;"
+                             th:style="'height:' + ${#numbers.formatDecimal(totalPagadoPorNomina[n.id] * 100 / maxTotalGrafico, 1, 0)} + '%;'"></div>
+                        <div style="font-size:11px;color:#718096;margin-top:6px;transform:rotate(-25deg);white-space:nowrap;"
+                             th:text="${#strings.replace(n.numero, 'NOM-', '')}">NOM</div>
+                    </div>
+                </div>
+                <p th:if="${nominasGrafico.isEmpty()}" style="color:#718096;text-align:center;padding:40px 0;">
+                    Genera nóminas para ver el gráfico de pagos.
+                </p>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-head">
+                <span>Empleados activos por departamento</span>
+            </div>
+            <div class="panel-body" style="min-height:220px;">
+                <div th:if="${!empleadosPorDepartamento.isEmpty()}" style="display:flex;flex-direction:column;gap:12px;padding-top:8px;">
+                    <div th:each="e : ${empleadosPorDepartamento}" style="display:flex;align-items:center;gap:10px;">
+                        <div style="width:130px;font-size:12px;color:#435a74;text-align:right;" th:text="${e.key}">Depto</div>
+                        <div style="flex:1;background:#edf2f9;border-radius:6px;overflow:hidden;">
+                            <div style="background:#22c55e;height:18px;border-radius:6px;min-width:12px;"
+                                 th:style="'width:' + ${e.value * 100 / maxDepartamento} + '%;'"></div>
+                        </div>
+                        <div style="width:28px;font-size:12px;font-weight:bold;color:#435a74;" th:text="${e.value}">0</div>
+                    </div>
+                </div>
+                <p th:if="${empleadosPorDepartamento.isEmpty()}" style="color:#718096;text-align:center;padding:40px 0;">
+                    No hay empleados registrados.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <div class="panel">
         <div class="panel-head">
             <span>Últimas nóminas generadas</span>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel" style="max-width:640px;">
+        <div class="panel-head" th:text="${modo == 'nuevo'} ? 'Nueva deducción' : 'Editar deducción'">
+            Formulario
+        </div>
+        <div class="panel-body">
+            <form th:action="@{/deducciones/guardar}" th:object="${deduccion}" method="post">
+                <input type="hidden" th:field="*{id}">
+                <div class="form-grid">
+                    <div class="campo">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" th:field="*{nombre}" required
+                               placeholder="Ej: Aporte sindical, Seguro médico...">
+                    </div>
+                    <div class="campo">
+                        <label for="tipoCalculo">Tipo de cálculo</label>
+                        <select id="tipoCalculo" th:field="*{tipoCalculo}">
+                            <option th:value="'PORCENTAJE'">Porcentaje del salario bruto</option>
+                            <option th:value="'IR'">Impuesto sobre la renta (regla especial)</option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label for="porcentaje">Porcentaje (%)</label>
+                        <input type="number" id="porcentaje" th:field="*{porcentaje}" step="0.001" min="0" max="100">
+                        <span class="error" style="font-size:12px;color:#718096;">
+                            (Obligatorio solo si el tipo es "Porcentaje")
+                        </span>
+                    </div>
+                    <div class="campo">
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" th:field="*{descripcion}" rows="2"
+                                  placeholder="Qué cubre esta deducción"></textarea>
+                    </div>
+                    <div class="campo">
+                        <label for="activa">Estado</label>
+                        <select id="activa" th:field="*{activa}">
+                            <option th:value="true">Activa</option>
+                            <option th:value="false">Inactiva</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-acciones">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline" th:href="@{/deducciones}">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

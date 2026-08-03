@@ -9,7 +9,7 @@
             Formulario
         </div>
         <div class="panel-body">
-            <form th:action="@{/empleados/guardar}" th:object="${empleado}" method="post">
+            <form th:action="@{/empleados/guardar}" th:object="${empleado}" method="post" enctype="multipart/form-data">
                 <input type="hidden" th:field="*{id}">
                 <div class="form-grid">
                     <div class="campo">
@@ -67,6 +67,25 @@
                             <option th:value="true">Activo</option>
                             <option th:value="false">Inactivo</option>
                         </select>
+                    </div>
+                    <div class="campo">
+                        <label for="contactoEmergencia">Contacto de emergencia</label>
+                        <input type="text" id="contactoEmergencia" th:field="*{contactoEmergencia}">
+                    </div>
+                    <div class="campo">
+                        <label for="telefonoEmergencia">Teléfono de emergencia</label>
+                        <input type="text" id="telefonoEmergencia" th:field="*{telefonoEmergencia}">
+                    </div>
+                    <div class="campo">
+                        <label for="tipoSangre">Tipo de sangre</label>
+                        <input type="text" id="tipoSangre" th:field="*{tipoSangre}" placeholder="O+, A-, AB+...">
+                    </div>
+                    <div class="campo">
+                        <label for="foto">Foto del empleado</label>
+                        <input type="file" id="foto" name="foto" accept="image/*">
+                        <span class="error" th:if="${modo == 'editar' and empleado.foto != null}" style="font-size:12px;color:#718096;">
+                            (deja vacío para conservar la foto actual)
+                        </span>
                     </div>
                 </div>
                 <div class="form-acciones">

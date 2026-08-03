@@ -1,5 +1,10 @@
 package com.fabrica.pagos.controller;
 
+import com.fabrica.pagos.model.Asistencia;
+import com.fabrica.pagos.model.AsistenciaResumen;
+import com.fabrica.pagos.model.Empleado;
+import com.fabrica.pagos.repository.AsistenciaRepository;
+import com.fabrica.pagos.repository.DeduccionAplicadaRepository;
 import com.fabrica.pagos.repository.EmpleadoRepository;
 import com.fabrica.pagos.repository.NominaRepository;
 import com.fabrica.pagos.repository.ReciboRepository;
@@ -15,8 +20,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/reportes")
@@ -25,17 +35,23 @@ public class ReporteController {
     private final EmpleadoRepository empleadoRepository;
     private final NominaRepository nominaRepository;
     private final ReciboRepository reciboRepository;
+    private final DeduccionAplicadaRepository deduccionAplicadaRepository;
+    private final AsistenciaRepository asistenciaRepository;
     private final ExcelService excelService;
     private final PdfService pdfService;
 
     public ReporteController(EmpleadoRepository empleadoRepository,
                              NominaRepository nominaRepository,
                              ReciboRepository reciboRepository,
+                             DeduccionAplicadaRepository deduccionAplicadaRepository,
+                             AsistenciaRepository asistenciaRepository,
                              ExcelService excelService,
                              PdfService pdfService) {
         this.empleadoRepository = empleadoRepository;
         this.nominaRepository = nominaRepository;
         this.reciboRepository = reciboRepository;
+        this.deduccionAplicadaRepository = deduccionAplicadaRepository;
+        this.asistenciaRepository = asistenciaRepository;
         this.excelService = excelService;
         this.pdfService = pdfService;
     }
@@ -74,8 +90,53 @@ public class ReporteController {
     @GetMapping("/recibo/{id}.pdf")
     public ResponseEntity<byte[]> exportarReciboPdf(@PathVariable Long id) throws Exception {
         var recibo = reciboRepository.findById(id).orElseThrow();
-        byte[] datos = pdfService.generarReciboPdf(recibo);
+        var deducciones = deduccionAplicadaRepository.findByReciboIdOrderByIdAsc(id);
+        byte[] datos = pdfService.generarReciboPdf(recibo, deducciones);
         return respuestaArchivo(datos, "recibo.pdf", MediaType.APPLICATION_PDF);
+    }
+
+    @GetMapping("/asistencia")
+    public String reporteAsistencia(@RequestParam(required = false) LocalDate inicio,
+                                    @RequestParam(required = false) LocalDate fin,
+                                    Model model) {
+        LocalDate i = inicio == null ? LocalDate.now().withDayOfMonth(1) : inicio;
+        LocalDate f = fin == null ? LocalDate.now() : fin;
+        List<AsistenciaResumen> resumen = resumenAsistencia(i, f);
+        List<Asistencia> detalle = asistenciaRepository.findByFechaBetweenOrderByFechaAsc(i, f);
+        model.addAttribute("inicio", i);
+        model.addAttribute("fin", f);
+        model.addAttribute("resumen", resumen);
+        model.addAttribute("detalle", detalle);
+        model.addAttribute("hoy", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        return "reportes/asistencia";
+    }
+
+    @GetMapping("/asistencia.xlsx")
+    public ResponseEntity<byte[]> exportarAsistenciaExcel(@RequestParam LocalDate inicio,
+                                                          @RequestParam LocalDate fin) throws Exception {
+        byte[] datos = excelService.exportarAsistencia(resumenAsistencia(inicio, fin), inicio, fin);
+        return respuestaArchivo(datos, "asistencia.xlsx",
+                MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+    }
+
+    @GetMapping("/asistencia.pdf")
+    public ResponseEntity<byte[]> exportarAsistenciaPdf(@RequestParam LocalDate inicio,
+                                                        @RequestParam LocalDate fin) throws Exception {
+        byte[] datos = pdfService.generarReporteAsistenciaPdf(resumenAsistencia(inicio, fin), inicio, fin);
+        return respuestaArchivo(datos, "asistencia.pdf", MediaType.APPLICATION_PDF);
+    }
+
+    private List<AsistenciaResumen> resumenAsistencia(LocalDate inicio, LocalDate fin) {
+        List<Asistencia> registros = asistenciaRepository.findByFechaBetweenOrderByFechaAsc(inicio, fin);
+        Map<Long, AsistenciaResumen> mapa = new LinkedHashMap<>();
+        for (Asistencia a : registros) {
+            Empleado e = a.getEmpleado();
+            AsistenciaResumen r = mapa.computeIfAbsent(e.getId(), k -> new AsistenciaResumen(
+                    e.getCodigo(), e.getNombreCompleto(), e.getCargo(), e.getDepartamento(), 0, 0));
+            r.setHorasTotales(r.getHorasTotales() + a.getHorasTrabajadas());
+            r.setDiasTrabajados(r.getDiasTrabajados() + 1);
+        }
+        return new ArrayList<>(mapa.values());
     }
 
     private ResponseEntity<byte[]> respuestaArchivo(byte[] datos, String nombreArchivo, MediaType mediaType) {

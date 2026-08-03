@@ -1,5 +1,6 @@
 package com.fabrica.pagos.service;
 
+import com.fabrica.pagos.model.AsistenciaResumen;
 import com.fabrica.pagos.model.Empleado;
 import com.fabrica.pagos.model.Recibo;
 import org.apache.poi.ss.usermodel.*;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -65,6 +67,35 @@ public class ExcelService {
                 row.createCell(6).setCellValue(r.getSalarioNeto().doubleValue());
                 row.createCell(7).setCellValue(r.getNomina().getPeriodoInicio().format(FECHA)
                         + " al " + r.getNomina().getPeriodoFin().format(FECHA));
+            }
+            for (int i = 0; i < columnas.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+            wb.write(out);
+            return out.toByteArray();
+        }
+    }
+
+    public byte[] exportarAsistencia(List<AsistenciaResumen> resumen,
+                                     LocalDate inicio, LocalDate fin) throws IOException {
+        try (Workbook wb = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = wb.createSheet("Asistencia");
+            CellStyle encabezado = estiloEncabezado(wb);
+            String[] columnas = {"Código", "Empleado", "Cargo", "Departamento",
+                    "Días trabajados", "Horas totales", "Promedio horas/día"};
+            crearFilaEncabezado(sheet, encabezado, columnas);
+
+            int fila = 1;
+            for (AsistenciaResumen r : resumen) {
+                Row row = sheet.createRow(fila++);
+                row.createCell(0).setCellValue(r.getCodigo());
+                row.createCell(1).setCellValue(r.getNombreCompleto());
+                row.createCell(2).setCellValue(r.getCargo() == null ? "" : r.getCargo());
+                row.createCell(3).setCellValue(r.getDepartamento());
+                row.createCell(4).setCellValue(r.getDiasTrabajados());
+                row.createCell(5).setCellValue(r.getHorasTotales());
+                row.createCell(6).setCellValue(r.getDiasTrabajados() == 0 ? 0
+                        : Math.round(r.getHorasTotales() * 100.0 / r.getDiasTrabajados()) / 100.0);
             }
             for (int i = 0; i < columnas.length; i++) {
                 sheet.autoSizeColumn(i);

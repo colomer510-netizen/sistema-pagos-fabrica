@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Reporte de asistencia</span>
+            <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <form th:action="@{/reportes/asistencia}" method="get" style="display:flex;gap:6px;align-items:center;">
+                    <label style="font-size:12px;color:#435a74;">Del</label>
+                    <input type="date" name="inicio" th:value="${inicio}" required
+                           style="padding:6px 8px;border:1px solid #dce2ea;border-radius:6px;">
+                    <label style="font-size:12px;color:#435a74;">al</label>
+                    <input type="date" name="fin" th:value="${fin}" required
+                           style="padding:6px 8px;border:1px solid #dce2ea;border-radius:6px;">
+                    <button class="btn btn-primary btn-sm" type="submit">Filtrar</button>
+                </form>
+                <a class="btn btn-success btn-sm" th:href="@{/reportes/asistencia.xlsx(inicio=${inicio},fin=${fin})}">Excel</a>
+                <a class="btn btn-warning btn-sm" th:href="@{/reportes/asistencia.pdf(inicio=${inicio},fin=${fin})}">PDF</a>
+            </span>
+        </div>
+        <div class="panel-body">
+            <div class="alerta alerta-info" th:if="${detalle.isEmpty()}">
+                No hay registros de asistencia en el periodo seleccionado.
+            </div>
+
+            <h3 style="font-size:14px;color:#435a74;margin:6px 0 12px;">Resumen por empleado</h3>
+            <table class="tabla" th:if="${!resumen.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Empleado</th>
+                    <th>Cargo</th>
+                    <th>Departamento</th>
+                    <th>Días trabajados</th>
+                    <th>Horas totales</th>
+                    <th>Promedio horas/día</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${resumen}">
+                    <td><strong th:text="${r.codigo}">EMP</strong></td>
+                    <td th:text="${r.nombreCompleto}">nombre</td>
+                    <td th:text="${r.cargo} ?: '-'">cargo</td>
+                    <td th:text="${r.departamento}">dep</td>
+                    <td th:text="${r.diasTrabajados}">0</td>
+                    <td th:text="${r.horasTotales}">0</td>
+                    <td th:text="${r.diasTrabajados == 0 ? 0 : #numbers.formatDecimal(r.horasTotales * 1.0 / r.diasTrabajados, 1, 2)}">0.00</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h3 style="font-size:14px;color:#435a74;margin:24px 0 12px;">Detalle diario</h3>
+            <div style="max-height:360px;overflow-y:auto;">
+                <table class="tabla">
+                    <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Empleado</th>
+                        <th>Horas</th>
+                        <th>Estado</th>
+                        <th>Observación</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="a : ${detalle}">
+                        <td th:text="${#temporals.format(a.fecha, 'dd/MM/yyyy')}">fecha</td>
+                        <td th:text="${a.empleado.nombreCompleto}">nombre</td>
+                        <td th:text="${a.horasTrabajadas}">0</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${a.estado == 'PRESENTE'} ? 'badge-activo' : 'badge-inactivo'"
+                                  th:text="${a.estado}">ESTADO</span>
+                        </td>
+                        <td th:text="${a.observacion} ?: '-'">obs</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="alerta alerta-info">
+        Configura aquí las deducciones automáticas que se aplican sobre el salario bruto en cada
+        nómina (además del INSS laboral). Solo las deducciones <strong>activas</strong> se descuentan
+        en el cálculo.
+    </div>
+    <div class="panel">
+        <div class="panel-head">
+            <span>Deducciones configuradas</span>
+            <a class="btn btn-primary" th:href="@{/deducciones/nuevo}">+ Nueva deducción</a>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Porcentaje</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="d : ${deducciones}">
+                    <td><strong th:text="${d.nombre}">Deducción</strong></td>
+                    <td th:text="d.porcentaje != null ? d.porcentaje + ' %' : 'variable'">0 %</td>
+                    <td th:text="${d.descripcion} ?: '-'">desc</td>
+                    <td>
+                        <span class="badge" th:classappend="${d.activa} ? 'badge-activo' : 'badge-inactivo'"
+                              th:text="${d.activa} ? 'Activa' : 'Inactiva'">Activa</span>
+                    </td>
+                    <td>
+                        <a class="btn btn-warning btn-sm" th:href="@{/deducciones/editar/{id}(id=${d.id})}">Editar</a>
+                        <form th:action="@{/deducciones/estado/{id}(id=${d.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-outline btn-sm" type="submit"
+                                    th:text="${d.activa} ? 'Desactivar' : 'Activar'">Cambiar</button>
+                        </form>
+                        <form th:action="@{/deducciones/eliminar/{id}(id=${d.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-danger btn-sm" type="submit" data-confirm="¿Eliminar esta deducción?">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${deducciones.isEmpty()}">
+                    <td colspan="5" style="text-align:center;color:#718096;padding:20px;">
+                        No hay deducciones configuradas.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

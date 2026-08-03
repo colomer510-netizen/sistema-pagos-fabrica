@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel" style="max-width:640px;">
+        <div class="panel-head" th:text="${modo == 'nuevo'} ? 'Nuevo préstamo' : 'Editar préstamo'">
+            Formulario
+        </div>
+        <div class="panel-body">
+            <form th:action="@{/prestamos/guardar}" th:object="${prestamo}" method="post">
+                <input type="hidden" th:field="*{id}">
+                <div class="form-grid">
+                    <div class="campo">
+                        <label for="empleado">Empleado</label>
+                        <select id="empleado" th:field="*{empleado}">
+                            <option value="">-- Seleccionar --</option>
+                            <option th:each="e : ${empleados}" th:value="${e.id}"
+                                    th:text="${e.codigo} + ' - ' + ${e.nombreCompleto}"></option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label for="descripcion">Descripción</label>
+                        <input type="text" id="descripcion" th:field="*{descripcion}" required
+                               placeholder="Ej: Préstamo para reparación de vivienda">
+                    </div>
+                    <div class="campo">
+                        <label for="monto">Monto total (C$)</label>
+                        <input type="number" id="monto" th:field="*{monto}" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="campo">
+                        <label for="cuota">Cuota por nómina (C$)</label>
+                        <input type="number" id="cuota" th:field="*{cuota}" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="campo">
+                        <label for="fecha">Fecha</label>
+                        <input type="date" id="fecha" th:field="*{fecha}" required>
+                    </div>
+                    <div class="campo">
+                        <label for="activo">Estado</label>
+                        <select id="activo" th:field="*{activo}">
+                            <option th:value="true">Activo</option>
+                            <option th:value="false">Liquidado / Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-acciones">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline" th:href="@{/prestamos}">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

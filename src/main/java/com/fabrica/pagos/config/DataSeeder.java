@@ -50,6 +50,7 @@ public class DataSeeder implements CommandLineRunner {
             admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setNombre("Administrador del Sistema");
             admin.setRol("ADMIN");
+            admin.setActivo(true);
             usuarioRepository.save(admin);
 
             Usuario lector = new Usuario();
@@ -57,6 +58,7 @@ public class DataSeeder implements CommandLineRunner {
             lector.setPassword(passwordEncoder.encode("lector123"));
             lector.setNombre("Usuario solo lectura");
             lector.setRol("LECTOR");
+            lector.setActivo(true);
             usuarioRepository.save(lector);
             log.info("Usuarios creados: admin/admin123 (ADMIN), lector/lector123 (LECTOR)");
         }
@@ -76,10 +78,22 @@ public class DataSeeder implements CommandLineRunner {
         }
 
         if (deduccionConfigRepository.count() == 0) {
-            crearDeduccion("INSS Laboral", "7.000", "Aporte del trabajador a la seguridad social", true);
-            crearDeduccion("IR (Impuesto sobre la Renta)", "0.000", "Retención de impuesto sobre la renta", false);
-            crearDeduccion("Préstamo", "0.000", "Descuento de préstamo de empresa", false);
+            crearDeduccion("INSS Laboral", "7.000", "Aporte del trabajador a la seguridad social", "PORCENTAJE", false);
+            crearDeduccion("IR (Impuesto sobre la Renta)", "2.000", "Retención de impuesto sobre la renta", "IR", false);
+            crearDeduccion("Préstamo", "5.000", "Descuento de préstamo de empresa", "PORCENTAJE", false);
             log.info("Configuración de deducciones creada");
+        } else {
+            correccionInssDuplicado();
+        }
+    }
+
+    private void correccionInssDuplicado() {
+        for (DeduccionConfig d : deduccionConfigRepository.findByNombreContainingIgnoreCase("INSS Laboral")) {
+            if (Boolean.TRUE.equals(d.getActiva())) {
+                d.setActiva(false);
+                deduccionConfigRepository.save(d);
+                log.warn("Se desactivó la deducción 'INSS Laboral' para evitar deducción duplicada con el cálculo nativo");
+            }
         }
     }
 
@@ -101,11 +115,12 @@ public class DataSeeder implements CommandLineRunner {
         empleadoRepository.save(e);
     }
 
-    private void crearDeduccion(String nombre, String porcentaje, String descripcion, boolean activa) {
+    private void crearDeduccion(String nombre, String porcentaje, String descripcion, String tipoCalculo, boolean activa) {
         DeduccionConfig d = new DeduccionConfig();
         d.setNombre(nombre);
         d.setPorcentaje(new BigDecimal(porcentaje));
         d.setDescripcion(descripcion);
+        d.setTipoCalculo(tipoCalculo);
         d.setActiva(activa);
         deduccionConfigRepository.save(d);
     }

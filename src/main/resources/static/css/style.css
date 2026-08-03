@@ -94,6 +94,10 @@ body {
     margin-bottom: 24px;
 }
 
+.grid-graficos {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
 .card {
     background: var(--blanco);
     border: 1px solid var(--gris-borde);

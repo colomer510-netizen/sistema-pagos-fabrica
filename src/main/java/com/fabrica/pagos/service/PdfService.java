@@ -1,5 +1,7 @@
 package com.fabrica.pagos.service;
 
+import com.fabrica.pagos.model.AsistenciaResumen;
+import com.fabrica.pagos.model.DeduccionAplicada;
 import com.fabrica.pagos.model.Empleado;
 import com.fabrica.pagos.model.Recibo;
 import com.lowagie.text.Document;
@@ -88,6 +90,10 @@ public class PdfService {
     }
 
     public byte[] generarReciboPdf(Recibo recibo) throws Exception {
+        return generarReciboPdf(recibo, List.of());
+    }
+
+    public byte[] generarReciboPdf(Recibo recibo, List<DeduccionAplicada> deducciones) throws Exception {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Document document = new Document();
             PdfWriter.getInstance(document, out);
@@ -128,6 +134,11 @@ public class PdfService {
             agregarDato(detalles, "Horas extras", String.valueOf(recibo.getHorasExtras()), normal);
             agregarDato(detalles, "Salario bruto", moneda + " " + formato(recibo.getSalarioBruto()), normal);
             agregarDato(detalles, "INSS laboral", "- " + moneda + " " + formato(recibo.getDescuentoInss()), normal);
+            for (DeduccionAplicada d : deducciones) {
+                agregarDato(detalles, d.getNombre(), "- " + moneda + " " + formato(d.getMonto()), normal);
+            }
+            agregarDato(detalles, "Total deducciones", "- " + moneda + " "
+                    + formato(recibo.getTotalDeducciones() == null ? recibo.getDescuentoInss() : recibo.getTotalDeducciones()), normal);
             agregarDato(detalles, "Salario neto", moneda + " " + formato(recibo.getSalarioNeto()), subtitulo);
             document.add(detalles);
 
@@ -135,6 +146,54 @@ public class PdfService {
             Paragraph firma = new Paragraph("_______________________________\nFirma del responsable", normal);
             firma.setAlignment(Element.ALIGN_RIGHT);
             document.add(firma);
+
+            document.close();
+            return out.toByteArray();
+        }
+    }
+
+    public byte[] generarReporteAsistenciaPdf(List<AsistenciaResumen> resumen,
+                                              java.time.LocalDate inicio, java.time.LocalDate fin) throws Exception {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Document document = new Document();
+            PdfWriter.getInstance(document, out);
+            document.open();
+
+            Font titulo = new Font(Font.HELVETICA, 16, Font.BOLD);
+            Font subtitulo = new Font(Font.HELVETICA, 12, Font.BOLD);
+            Font normal = new Font(Font.HELVETICA, 11, Font.NORMAL);
+
+            Paragraph p = new Paragraph("REPORTE DE ASISTENCIA", titulo);
+            p.setAlignment(Element.ALIGN_CENTER);
+            document.add(p);
+
+            Paragraph periodo = new Paragraph("Periodo: " + inicio.format(FECHA) + " al " + fin.format(FECHA), subtitulo);
+            periodo.setAlignment(Element.ALIGN_CENTER);
+            document.add(periodo);
+            document.add(new Paragraph(" "));
+
+            PdfPTable tabla = new PdfPTable(7);
+            tabla.setWidthPercentage(100);
+            tabla.setWidths(new float[]{2.0f, 4.5f, 3.0f, 2.6f, 2.6f, 2.4f, 2.8f});
+            String[] headers = {"Código", "Empleado", "Cargo", "Departamento", "Días", "Horas", "Promedio"};
+            for (String h : headers) {
+                PdfPCell cell = new PdfPCell(new Paragraph(h, subtitulo));
+                cell.setBackgroundColor(new Color(230, 230, 230));
+                cell.setPadding(2);
+                tabla.addCell(cell);
+            }
+
+            for (AsistenciaResumen r : resumen) {
+                tabla.addCell(new Paragraph(r.getCodigo(), normal));
+                tabla.addCell(new Paragraph(r.getNombreCompleto(), normal));
+                tabla.addCell(new Paragraph(r.getCargo() == null ? "-" : r.getCargo(), normal));
+                tabla.addCell(new Paragraph(r.getDepartamento(), normal));
+                tabla.addCell(new Paragraph(String.valueOf(r.getDiasTrabajados()), normal));
+                tabla.addCell(new Paragraph(String.valueOf(r.getHorasTotales()), normal));
+                tabla.addCell(new Paragraph(String.format("%.2f", r.getDiasTrabajados() == 0
+                        ? 0 : r.getHorasTotales() * 1.0 / r.getDiasTrabajados()), normal));
+            }
+            document.add(tabla);
 
             document.close();
             return out.toByteArray();

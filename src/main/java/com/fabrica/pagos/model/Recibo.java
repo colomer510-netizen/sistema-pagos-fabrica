@@ -32,6 +32,9 @@ public class Recibo {
     @Column(nullable = false, precision = 14, scale = 2)
     private BigDecimal descuentoInss;
 
+    @Column(precision = 14, scale = 2)
+    private BigDecimal totalDeducciones;
+
     @Column(nullable = false, precision = 14, scale = 2)
     private BigDecimal salarioNeto;
 
@@ -49,6 +52,8 @@ public class Recibo {
     public void setSalarioBruto(BigDecimal salarioBruto) { this.salarioBruto = salarioBruto; }
     public BigDecimal getDescuentoInss() { return descuentoInss; }
     public void setDescuentoInss(BigDecimal descuentoInss) { this.descuentoInss = descuentoInss; }
+    public BigDecimal getTotalDeducciones() { return totalDeducciones; }
+    public void setTotalDeducciones(BigDecimal totalDeducciones) { this.totalDeducciones = totalDeducciones; }
     public BigDecimal getSalarioNeto() { return salarioNeto; }
     public void setSalarioNeto(BigDecimal salarioNeto) { this.salarioNeto = salarioNeto; }
 }

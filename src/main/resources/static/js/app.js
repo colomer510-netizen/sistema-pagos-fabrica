@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var links = document.querySelectorAll('a[data-confirm]');
-    links.forEach(function (link) {
-        link.addEventListener('click', function (event) {
-            var mensaje = link.getAttribute('data-confirm');
+    var confirmables = document.querySelectorAll('a[data-confirm], button[data-confirm], form[data-confirm]');
+
+    confirmables.forEach(function (elemento) {
+        elemento.addEventListener('click', function (event) {
+            var mensaje = elemento.getAttribute('data-confirm');
             if (!window.confirm(mensaje)) {
                 event.preventDefault();
+                event.stopPropagation();
             }
         });
     });

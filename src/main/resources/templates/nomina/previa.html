@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span th:text="'Vista previa de nómina'">Vista previa</span>
+            <span style="display:flex;gap:8px;">
+                <form th:action="@{/nomina/generar}" method="post" style="display:inline;">
+                    <input type="hidden" name="periodoInicio" th:value="${periodoInicio}">
+                    <input type="hidden" name="periodoFin" th:value="${periodoFin}">
+                    <button class="btn btn-primary btn-sm" type="submit">Confirmar y generar</button>
+                </form>
+                <a class="btn btn-outline btn-sm" th:href="@{/nomina/generar}">&larr; Volver</a>
+            </span>
+        </div>
+        <div class="panel-body">
+            <div class="alerta alerta-info">
+                Este es un cálculo estimado. Al confirmar se genera la nómina y se actualiza el
+                saldo de los préstamos. Periodo:
+                <strong th:text="${#temporals.format(periodoInicio, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(periodoFin, 'dd/MM/yyyy')}">periodo</strong>.
+            </div>
+
+            <div class="grid-cards" style="margin-bottom:16px;">
+                <div class="card">
+                    <div class="card-titulo">Empleados</div>
+                    <div class="card-valor" style="font-size:20px;" th:text="${totalEmpleados}">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Total horas</div>
+                    <div class="card-valor" style="font-size:20px;" th:text="${totalHoras}">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Total a pagar estimado</div>
+                    <div class="card-valor" style="font-size:20px;" th:text="'C$ ' + ${#numbers.formatDecimal(totalPagar, 1, 2)}">C$ 0.00</div>
+                </div>
+            </div>
+
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Empleado</th>
+                    <th>H. normales</th>
+                    <th>H. extras</th>
+                    <th>Bruto</th>
+                    <th>Deducciones</th>
+                    <th>Neto</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="i : ${items}">
+                    <td><strong th:text="${i.codigo}">EMP</strong></td>
+                    <td th:text="${i.nombreCompleto}">nombre</td>
+                    <td th:text="${i.horasNormales}">0</td>
+                    <td th:text="${i.horasExtras}">0</td>
+                    <td th:text="'C$ ' + ${#numbers.formatDecimal(i.salarioBruto, 1, 2)}">C$ 0.00</td>
+                    <td style="font-size:13px;">
+                        <div th:text="'INSS: C$ ' + ${#numbers.formatDecimal(i.inss, 1, 2)}">INSS</div>
+                        <div th:each="d : ${i.deducciones}" class="moneda"
+                             th:text="${d.nombre} + ': C$ ' + ${#numbers.formatDecimal(d.monto, 1, 2)}">-</div>
+                        <div th:if="${i.cuotaPrestamo > 0}" class="moneda"
+                             th:text="'Préstamo: C$ ' + ${#numbers.formatDecimal(i.cuotaPrestamo, 1, 2)}">-</div>
+                        <div class="moneda" style="font-weight:bold;border-top:1px solid #dce2ea;margin-top:3px;padding-top:2px;"
+                             th:text="'Total: C$ ' + ${#numbers.formatDecimal(i.totalDeducciones, 1, 2)}">Total</div>
+                    </td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(i.salarioNeto, 1, 2)}">C$ 0.00</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

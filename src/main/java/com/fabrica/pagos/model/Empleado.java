@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -61,6 +60,18 @@ public class Empleado {
     @Column(nullable = false)
     private Boolean activo = true;
 
+    @Column(length = 100)
+    private String contactoEmergencia;
+
+    @Column(length = 30)
+    private String telefonoEmergencia;
+
+    @Column(length = 100)
+    private String tipoSangre;
+
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] foto;
+
     @Column(nullable = false)
     private LocalDateTime fechaRegistro = LocalDateTime.now();
 
@@ -94,6 +105,14 @@ public class Empleado {
     public void setFechaContratacion(LocalDate fechaContratacion) { this.fechaContratacion = fechaContratacion; }
     public Boolean getActivo() { return activo; }
     public void setActivo(Boolean activo) { this.activo = activo; }
+    public String getContactoEmergencia() { return contactoEmergencia; }
+    public void setContactoEmergencia(String contactoEmergencia) { this.contactoEmergencia = contactoEmergencia; }
+    public String getTelefonoEmergencia() { return telefonoEmergencia; }
+    public void setTelefonoEmergencia(String telefonoEmergencia) { this.telefonoEmergencia = telefonoEmergencia; }
+    public String getTipoSangre() { return tipoSangre; }
+    public void setTipoSangre(String tipoSangre) { this.tipoSangre = tipoSangre; }
+    public byte[] getFoto() { return foto; }
+    public void setFoto(byte[] foto) { this.foto = foto; }
     public LocalDateTime getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(LocalDateTime fechaRegistro) { this.fechaRegistro = fechaRegistro; }
 }
