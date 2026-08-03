@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel" style="max-width:640px;">
+        <div class="panel-head" th:text="${modo == 'nuevo'} ? 'Nueva evaluación de desempeño' : 'Editar evaluación'">
+            Formulario
+        </div>
+        <div class="panel-body">
+            <form th:action="@{/evaluaciones/guardar}" th:object="${evaluacion}" method="post">
+                <input type="hidden" th:field="*{id}">
+                <div class="form-grid">
+                    <div class="campo">
+                        <label for="empleado">Empleado</label>
+                        <select id="empleado" th:field="*{empleado}">
+                            <option value="">-- Seleccionar --</option>
+                            <option th:each="e : ${empleados}" th:value="${e.id}"
+                                    th:text="${e.codigo} + ' - ' + ${e.nombreCompleto}"></option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label for="periodo">Periodo</label>
+                        <input type="text" id="periodo" th:field="*{periodo}" required
+                               placeholder="Ej: 2026, Enero 2026, Primer semestre">
+                    </div>
+                    <div class="campo">
+                        <label for="fechaEvaluacion">Fecha de evaluación</label>
+                        <input type="date" id="fechaEvaluacion" th:field="*{fechaEvaluacion}" required>
+                    </div>
+                    <div class="campo">
+                        <label for="evaluador">Evaluador</label>
+                        <input type="text" id="evaluador" th:field="*{evaluador}" placeholder="Nombre del evaluador">
+                    </div>
+                    <div class="campo" style="grid-column:1 / -1;">
+                        <label for="puntaje">Puntaje: <span id="puntajeValor" th:text="${evaluacion.puntaje} ?: 0">0</span> / 100</label>
+                        <input type="range" id="puntaje" th:field="*{puntaje}" min="0" max="100" step="1"
+                               oninput="document.getElementById('puntajeValor').textContent = this.value;">
+                    </div>
+                    <div class="campo" style="grid-column:1 / -1;">
+                        <label for="comentarios">Comentarios</label>
+                        <textarea id="comentarios" th:field="*{comentarios}" rows="4"
+                                  placeholder="Fortalezas, áreas de mejora, metas..."></textarea>
+                    </div>
+                </div>
+                <p style="font-size:12px;color:#718096;margin:0 0 12px;">
+                    La calificación se asigna automáticamente según el puntaje:
+                    EXCELENTE (90-100), BUENO (75-89), REGULAR (60-74), INSUFICIENTE (0-59).
+                </p>
+                <div class="form-acciones">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline" th:href="@{/evaluaciones}">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package com.fabrica.pagos.controller;
 
 import com.fabrica.pagos.model.Empleado;
+import com.fabrica.pagos.repository.DocumentoEmpleadoRepository;
 import com.fabrica.pagos.repository.EmpleadoRepository;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,9 +24,12 @@ import java.time.LocalDate;
 public class EmpleadoController {
 
     private final EmpleadoRepository empleadoRepository;
+    private final DocumentoEmpleadoRepository documentoEmpleadoRepository;
 
-    public EmpleadoController(EmpleadoRepository empleadoRepository) {
+    public EmpleadoController(EmpleadoRepository empleadoRepository,
+                              DocumentoEmpleadoRepository documentoEmpleadoRepository) {
         this.empleadoRepository = empleadoRepository;
+        this.documentoEmpleadoRepository = documentoEmpleadoRepository;
     }
 
     @GetMapping
@@ -107,6 +111,7 @@ public class EmpleadoController {
     @GetMapping("/detalle/{id}")
     public String detalle(@PathVariable Long id, Model model) {
         model.addAttribute("empleado", empleadoRepository.findById(id).orElseThrow());
+        model.addAttribute("documentos", documentoEmpleadoRepository.findByEmpleadoIdOrderByFechaSubidaDesc(id));
         return "empleados/detalle";
     }
 

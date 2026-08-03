@@ -53,6 +53,55 @@
                 </table>
             </div>
 
+            <div class="panel" style="margin-top:20px;border:none;box-shadow:none;padding:0;">
+                <div class="panel-head" style="padding-left:0;">Expediente digital (documentos)</div>
+                <form sec:authorize="hasRole('ADMIN')" th:action="@{/documentos/subir}" method="post"
+                      enctype="multipart/form-data" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">
+                    <input type="hidden" name="empleadoId" th:value="${empleado.id}">
+                    <input type="file" name="archivo" required style="font-size:13px;">
+                    <select name="tipo" style="padding:7px 10px;border:1px solid #dce2ea;border-radius:6px;font-size:13px;">
+                        <option value="">Tipo...</option>
+                        <option value="CONTRATO">Contrato</option>
+                        <option value="CEDULA">Cédula</option>
+                        <option value="CURRICULUM">Currículum</option>
+                        <option value="CONSTANCIA">Constancia</option>
+                        <option value="OTRO">Otro</option>
+                    </select>
+                    <input type="text" name="descripcion" placeholder="Descripción (opcional)"
+                           style="padding:7px 10px;border:1px solid #dce2ea;border-radius:6px;font-size:13px;">
+                    <button class="btn btn-primary btn-sm" type="submit">Subir</button>
+                </form>
+                <table class="tabla" th:if="${!documentos.isEmpty()}">
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Subido</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="d : ${documentos}">
+                        <td th:text="${d.nombre}">-</td>
+                        <td><span class="badge badge-info" th:text="${d.tipo} ?: '-'">-</span></td>
+                        <td th:text="${d.descripcion} ?: '-'">-</td>
+                        <td th:text="${#temporals.format(d.fechaSubida, 'dd/MM/yyyy HH:mm')}">-</td>
+                        <td>
+                            <a class="btn btn-outline btn-sm" th:href="@{/documentos/descargar/{id}(id=${d.id})}">Descargar</a>
+                            <form sec:authorize="hasRole('ADMIN')" th:action="@{/documentos/eliminar/{id}(id=${d.id})}" method="post"
+                                  style="display:inline;" data-confirm="¿Eliminar este documento?">
+                                <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p th:if="${documentos.isEmpty()}" style="color:#718096;font-size:13px;">
+                    No hay documentos en el expediente.
+                </p>
+            </div>
+
             <div class="form-acciones">
                 <a sec:authorize="hasRole('ADMIN')" class="btn btn-warning" th:href="@{/empleados/editar/{id}(id=${empleado.id})}">Editar</a>
                 <a class="btn btn-outline" th:href="@{/contabilidad/calcular/{id}(id=${empleado.id})}">Cálculo contable</a>

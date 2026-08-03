@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Liquidaciones</span>
+            <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/liquidaciones/nuevo}">+ Nueva liquidación</a>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Empleado</th>
+                    <th>Fecha de salida</th>
+                    <th>Motivo</th>
+                    <th>Vacaciones (días)</th>
+                    <th>Monto vacaciones</th>
+                    <th>Indemnización</th>
+                    <th>Otros</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="l : ${liquidaciones}">
+                    <td><strong th:text="${l.empleado.codigo}">EMP</strong> <span th:text="${l.empleado.nombreCompleto}">nombre</span></td>
+                    <td th:text="${#temporals.format(l.fechaSalida, 'dd/MM/yyyy')}">fecha</td>
+                    <td>
+                        <span class="badge badge-info" th:text="${l.motivo}">motivo</span>
+                    </td>
+                    <td th:text="${l.diasVacacionesPendientes} + ' día(s)'">0</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(l.montoVacaciones, 1, 2)}">C$ 0.00</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(l.indemnizacion, 1, 2)}">C$ 0.00</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(l.otros, 1, 2)}">C$ 0.00</td>
+                    <td class="moneda" style="font-weight:700;" th:text="'C$ ' + ${#numbers.formatDecimal(l.total, 1, 2)}">C$ 0.00</td>
+                    <td>
+                        <a class="btn btn-outline btn-sm" th:href="@{/liquidaciones/detalle/{id}(id=${l.id})}">Ver</a>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/liquidaciones/eliminar/{id}(id=${l.id})}" method="post"
+                              style="display:inline;" data-confirm="¿Eliminar esta liquidación?">
+                            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${liquidaciones.isEmpty()}">
+                    <td colspan="9" style="text-align:center;color:#718096;padding:20px;">
+                        No hay liquidaciones registradas.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

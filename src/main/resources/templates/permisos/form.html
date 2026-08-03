@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel" style="max-width:640px;">
+        <div class="panel-head" th:text="${modo == 'nuevo'} ? 'Nuevo permiso / vacación' : 'Editar permiso / vacación'">
+            Formulario
+        </div>
+        <div class="panel-body">
+            <form th:action="@{/permisos/guardar}" th:object="${permiso}" method="post">
+                <input type="hidden" th:field="*{id}">
+                <div class="form-grid">
+                    <div class="campo">
+                        <label for="empleado">Empleado</label>
+                        <select id="empleado" th:field="*{empleado}">
+                            <option value="">-- Seleccionar --</option>
+                            <option th:each="e : ${empleados}" th:value="${e.id}"
+                                    th:text="${e.codigo} + ' - ' + ${e.nombreCompleto}"></option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label for="tipo">Tipo</label>
+                        <select id="tipo" th:field="*{tipo}" required>
+                            <option value="VACACIONES">Vacaciones</option>
+                            <option value="PERMISO">Permiso</option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label for="fechaInicio">Fecha de inicio</label>
+                        <input type="date" id="fechaInicio" th:field="*{fechaInicio}" required>
+                    </div>
+                    <div class="campo">
+                        <label for="fechaFin">Fecha de fin</label>
+                        <input type="date" id="fechaFin" th:field="*{fechaFin}" required>
+                    </div>
+                    <div class="campo" style="grid-column:1 / -1;">
+                        <label for="motivo">Motivo / descripción</label>
+                        <textarea id="motivo" th:field="*{motivo}" rows="3"
+                                  placeholder="Ej: Vacaciones anuales, cita médica, asunto personal..."></textarea>
+                    </div>
+                </div>
+                <p style="font-size:12px;color:#718096;margin:0 0 12px;">
+                    Los días se calculan automáticamente (incluye el día de inicio y el de fin).
+                </p>
+                <div class="form-acciones">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline" th:href="@{/permisos}">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

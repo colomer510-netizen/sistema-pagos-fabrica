@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Evaluaciones de desempeño</span>
+            <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <form th:action="@{/evaluaciones}" method="get" style="display:flex;gap:6px;align-items:center;">
+                    <label style="font-size:13px;">Empleado:</label>
+                    <select name="empleadoId" style="padding:7px 10px;border:1px solid #dce2ea;border-radius:6px;">
+                        <option value="">Todos</option>
+                        <option th:each="e : ${empleados}" th:value="${e.id}"
+                                th:selected="${empleadoId != null && empleadoId == e.id}"
+                                th:text="${e.codigo} + ' - ' + ${e.nombreCompleto}"></option>
+                    </select>
+                    <button class="btn btn-outline" type="submit">Filtrar</button>
+                </form>
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/evaluaciones/nuevo}">+ Nueva evaluación</a>
+            </span>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Empleado</th>
+                    <th>Periodo</th>
+                    <th>Fecha</th>
+                    <th>Puntaje</th>
+                    <th>Calificación</th>
+                    <th>Evaluador</th>
+                    <th>Comentarios</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ev : ${evaluaciones}">
+                    <td><strong th:text="${ev.empleado.codigo}">EMP</strong> <span th:text="${ev.empleado.nombreCompleto}">nombre</span></td>
+                    <td th:text="${ev.periodo}">2026</td>
+                    <td th:text="${#temporals.format(ev.fechaEvaluacion, 'dd/MM/yyyy')}">fecha</td>
+                    <td th:text="${ev.puntaje} + ' / 100'">0</td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${ev.calificacion == 'EXCELENTE'} ? 'badge-activo' : (${ev.calificacion == 'BUENO'} ? 'badge-info' : (${ev.calificacion == 'REGULAR'} ? 'badge-peligro' : 'badge-inactivo'))"
+                              th:text="${ev.calificacion}">-</span>
+                    </td>
+                    <td th:text="${ev.evaluador} ?: '-'">-</td>
+                    <td style="max-width:220px;" th:text="${ev.comentarios} ?: '-'">-</td>
+                    <td>
+                        <a sec:authorize="hasRole('ADMIN')" class="btn btn-warning btn-sm"
+                           th:href="@{/evaluaciones/editar/{id}(id=${ev.id})}">Editar</a>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/evaluaciones/eliminar/{id}(id=${ev.id})}" method="post"
+                              style="display:inline;" data-confirm="¿Eliminar esta evaluación?">
+                            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${evaluaciones.isEmpty()}">
+                    <td colspan="8" style="text-align:center;color:#718096;padding:20px;">
+                        No hay evaluaciones registradas.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

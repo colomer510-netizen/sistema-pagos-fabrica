@@ -7,12 +7,16 @@ Desarrollada con **Spring Boot**, **Thymeleaf**, **Spring Security**, **JPA/Hibe
 ## Características
 
 - **Empleados**: alta, edición, eliminación, foto, contacto de emergencia, tipo de sangre y consulta de detalle.
+- **Expediente digital**: sube, descarga y elimina documentos por empleado (contratos, cédulas, constancias...).
 - **Asistencia**: registro diario por empleado (Presente, Enfermedad, Vacaciones, Falta) y control de horas.
+- **Permisos y vacaciones**: solicitudes de vacaciones/permisos con fechas, cálculo automático de días y aprobación/rechazo.
+- **Evaluaciones de desempeño**: puntaje de 0-100 por periodo con calificación automática (EXCELENTE/BUENO/REGULAR/INSUFICIENTE).
+- **Liquidaciones**: cálculo automático al terminar la relación laboral (vacaciones pendientes, indemnización por despido) y baja del empleado.
 - **Nómina**: generación por periodo con cálculo de horas normales/extras, salario bruto, INSS laboral, deducciones y cuotas de préstamo.
 - **Vista previa de nómina**: revisa el cálculo estimado de todo el periodo antes de confirmar y generar.
 - **Deducciones configurables**: porcentaje fijo (PORCENTAJE) o impuesto sobre la renta progresivo (IR), con desglose en cada recibo y su PDF.
 - **Préstamos**: registro de préstamos por empleado, abonos manuales, liquidación y descuento automático de la cuota en la nómina.
-- **Usuarios y permisos**: roles Administrador / Solo lectura, con activación/desactivación de cuentas.
+- **Usuarios y permisos**: roles Administrador / Solo lectura, bloqueo por intentos fallidos, forzar cambio de contraseña y expiración.
 - **Contabilidad**: cálculo de pago mensual estimado, INSS laboral y patronal, vacaciones, aguinaldo e indemnización.
 - **Dashboard**: indicadores y gráficos de total pagado por nómina y empleados activos por departamento.
 - **Reportes**: exportación a **Excel** y **PDF** de empleados, nóminas, recibos individuales y asistencia por periodo.
@@ -74,6 +78,15 @@ app.contabilidad.moneda=C$
 app.contabilidad.deduccion-inss=7.0
 app.contabilidad.deduccion-inss-patronal=22.5
 
+# Parámetros de RRHH
+app.rrhh.dias-vacaciones-por-anyo=15
+app.rrhh.dias-indemnizacion-por-anyo=30
+
+# Seguridad
+app.security.max-intentos=5
+app.security.bloqueo-minutos=15
+app.security.password-expiracion-dias=0
+
 # Semilla de datos iniciales (usuarios, empleados, deducciones de ejemplo)
 app.seed.enabled=true
 ```
@@ -86,11 +99,15 @@ La base de datos se crea automáticamente en `data/fabrica.db`. Los respaldos se
 |---|---|
 | Dashboard | `/dashboard` |
 | Empleados | `/empleados` |
+| Expediente digital | `/empleados/detalle/{id}` |
 | Asistencia | `/asistencia` |
+| Permisos y vacaciones | `/permisos` |
+| Evaluaciones | `/evaluaciones` |
 | Nóminas | `/nomina` |
 | Vista previa de nómina | `/nomina/previa` |
 | Deducciones | `/deducciones` |
 | Préstamos | `/prestamos` |
+| Liquidaciones | `/liquidaciones` |
 | Contabilidad | `/contabilidad` |
 | Reportes | `/reportes` |
 | Asistencia (reporte) | `/reportes/asistencia` |

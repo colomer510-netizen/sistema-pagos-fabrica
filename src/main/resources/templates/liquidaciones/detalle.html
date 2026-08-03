@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel" style="max-width:720px;">
+        <div class="panel-head">
+            <span>Liquidación - <span th:text="${liquidacion.empleado.codigo} + ' ' + ${liquidacion.empleado.nombreCompleto}">Empleado</span></span>
+            <a class="btn btn-outline btn-sm" th:href="@{/liquidaciones}">&larr; Volver</a>
+        </div>
+        <div class="panel-body">
+            <table class="tabla">
+                <tbody>
+                <tr><th style="width:220px;">Empleado</th><td th:text="${liquidacion.empleado.nombreCompleto}">-</td></tr>
+                <tr><th>Código</th><td th:text="${liquidacion.empleado.codigo}">-</td></tr>
+                <tr><th>Cargo</th><td th:text="${liquidacion.empleado.cargo} ?: '-'">-</td></tr>
+                <tr><th>Fecha de contratación</th>
+                    <td th:text="${#temporals.format(liquidacion.empleado.fechaContratacion, 'dd/MM/yyyy')}">-</td></tr>
+                <tr><th>Fecha de salida</th>
+                    <td th:text="${#temporals.format(liquidacion.fechaSalida, 'dd/MM/yyyy')}">-</td></tr>
+                <tr><th>Motivo</th>
+                    <td><span class="badge badge-info" th:text="${liquidacion.motivo}">-</span></td></tr>
+                <tr><th>Días de vacaciones pendientes</th><td th:text="${liquidacion.diasVacacionesPendientes} + ' día(s)'">-</td></tr>
+                <tr><th>Monto por vacaciones</th>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(liquidacion.montoVacaciones, 1, 2)}">-</td></tr>
+                <tr><th>Indemnización</th>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(liquidacion.indemnizacion, 1, 2)}">-</td></tr>
+                <tr><th>Otros montos</th>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(liquidacion.otros, 1, 2)}">-</td></tr>
+                <tr style="font-weight:700;">
+                    <th>Total a pagar</th>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(liquidacion.total, 1, 2)}">-</td></tr>
+                <tr th:if="${liquidacion.observacion != null and !liquidacion.observacion.isBlank()}">
+                    <th>Observación</th><td th:text="${liquidacion.observacion}">-</td></tr>
+                </tbody>
+            </table>
+            <div class="form-acciones" style="margin-top:16px;">
+                <a class="btn btn-primary" th:href="@{/liquidaciones}">Volver al listado</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

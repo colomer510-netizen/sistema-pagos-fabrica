@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Permisos y vacaciones</span>
+            <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <form th:action="@{/permisos}" method="get" style="display:flex;gap:6px;align-items:center;">
+                    <label style="font-size:13px;">Empleado:</label>
+                    <select name="empleadoId" style="padding:7px 10px;border:1px solid #dce2ea;border-radius:6px;">
+                        <option value="">Todos</option>
+                        <option th:each="e : ${empleados}" th:value="${e.id}"
+                                th:selected="${empleadoId != null && empleadoId == e.id}"
+                                th:text="${e.codigo} + ' - ' + ${e.nombreCompleto}"></option>
+                    </select>
+                    <button class="btn btn-outline" type="submit">Filtrar</button>
+                </form>
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/permisos/nuevo}">+ Nuevo permiso</a>
+            </span>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Empleado</th>
+                    <th>Tipo</th>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Días</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${permisos}">
+                    <td><strong th:text="${p.empleado.codigo}">EMP</strong> <span th:text="${p.empleado.nombreCompleto}">nombre</span></td>
+                    <td>
+                        <span class="badge badge-info" th:text="${p.tipo}">VACACIONES</span>
+                    </td>
+                    <td th:text="${#temporals.format(p.fechaInicio, 'dd/MM/yyyy')}">inicio</td>
+                    <td th:text="${#temporals.format(p.fechaFin, 'dd/MM/yyyy')}">fin</td>
+                    <td th:text="${p.dias} + ' día(s)'">0</td>
+                    <td th:text="${p.motivo} ?: '-'">motivo</td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${p.estado == 'APROBADO'} ? 'badge-activo' : (${p.estado == 'RECHAZADO'} ? 'badge-inactivo' : 'badge-peligro')"
+                              th:text="${p.estado}">PENDIENTE</span>
+                    </td>
+                    <td>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/permisos/estado/{id}(id=${p.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-outline btn-sm" name="estado" value="APROBADO">Aprobar</button>
+                        </form>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/permisos/estado/{id}(id=${p.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-outline btn-sm" name="estado" value="RECHAZADO">Rechazar</button>
+                        </form>
+                        <a sec:authorize="hasRole('ADMIN')" class="btn btn-warning btn-sm"
+                           th:href="@{/permisos/editar/{id}(id=${p.id})}">Editar</a>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/permisos/eliminar/{id}(id=${p.id})}" method="post"
+                              style="display:inline;" data-confirm="¿Eliminar este permiso?">
+                            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${permisos.isEmpty()}">
+                    <td colspan="8" style="text-align:center;color:#718096;padding:20px;">
+                        No hay permisos o vacaciones registrados.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
