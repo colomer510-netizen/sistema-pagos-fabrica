@@ -13,7 +13,13 @@ public class AuthController {
                         @RequestParam(value = "logout", required = false) String logout,
                         Model model) {
         if (error != null) {
-            model.addAttribute("mensajeError", "Usuario o contraseña incorrectos");
+            switch (error) {
+                case "bloqueado" ->
+                        model.addAttribute("mensajeError", "Cuenta bloqueada por intentos fallidos. Intenta más tarde.");
+                case "inactivo" ->
+                        model.addAttribute("mensajeError", "El usuario está inactivo. Contacta al administrador.");
+                default -> model.addAttribute("mensajeError", "Usuario o contraseña incorrectos");
+            }
         }
         if (logout != null) {
             model.addAttribute("mensajeExito", "Sesión cerrada correctamente");

@@ -57,8 +57,11 @@ public class UsuarioController {
                 existente.setUsername(usuario.getUsername());
                 existente.setNombre(usuario.getNombre());
                 existente.setRol(usuario.getRol());
+                existente.setActivo(usuario.getActivo());
+                existente.setCambiarPassword(usuario.getCambiarPassword());
                 if (password != null && !password.isBlank()) {
                     existente.setPassword(passwordEncoder.encode(password));
+                    existente.setCambiarPassword(true);
                 }
                 usuarioRepository.save(existente);
             } else {
@@ -101,6 +104,17 @@ public class UsuarioController {
         usuario.setActivo(!Boolean.TRUE.equals(usuario.getActivo()));
         usuarioRepository.save(usuario);
         ra.addFlashAttribute("mensajeExito", "Estado actualizado");
+        return "redirect:/usuarios";
+    }
+
+    @PostMapping("/desbloquear/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String desbloquear(@PathVariable Long id, RedirectAttributes ra) {
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow();
+        usuario.setIntentosFallidos(0);
+        usuario.setFechaBloqueo(null);
+        usuarioRepository.save(usuario);
+        ra.addFlashAttribute("mensajeExito", "Cuenta desbloqueada correctamente");
         return "redirect:/usuarios";
     }
 }

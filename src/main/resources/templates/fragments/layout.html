@@ -28,7 +28,10 @@
             <div>Usuario: <strong th:text="${#authentication.name}">admin</strong></div>
             <div sec:authorize="hasRole('ADMIN')">Rol: Administrador</div>
             <div sec:authorize="hasRole('LECTOR')">Rol: Solo lectura</div>
-            <a th:href="@{/logout}">Cerrar sesión</a>
+            <a th:href="@{/cambiar-password}">Cambiar contraseña</a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" style="background:none;border:none;color:var(--azul);cursor:pointer;font:inherit;padding:0;">Cerrar sesión</button>
+            </form>
         </div>
     </aside>
     <main class="main">

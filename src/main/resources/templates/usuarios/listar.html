@@ -35,12 +35,20 @@
                     <td>
                         <span class="badge" th:classappend="${u.activo} ? 'badge-activo' : 'badge-inactivo'"
                               th:text="${u.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                        <span class="badge badge-peligro" th:if="${u.fechaBloqueo != null}"
+                              title="Cuenta bloqueada por intentos fallidos">Bloqueado</span>
+                        <span class="badge badge-info" th:if="${u.cambiarPassword}"
+                              title="Requerirá cambio de contraseña al iniciar sesión">Cambio de clave</span>
                     </td>
                     <td>
                         <a class="btn btn-warning btn-sm" th:href="@{/usuarios/editar/{id}(id=${u.id})}">Editar</a>
                         <form th:action="@{/usuarios/estado/{id}(id=${u.id})}" method="post" style="display:inline;">
                             <button class="btn btn-outline btn-sm" type="submit"
                                     th:text="${u.activo} ? 'Desactivar' : 'Activar'">Cambiar</button>
+                        </form>
+                        <form th:if="${u.fechaBloqueo != null}" th:action="@{/usuarios/desbloquear/{id}(id=${u.id})}"
+                              method="post" style="display:inline;">
+                            <button class="btn btn-success btn-sm" type="submit">Desbloquear</button>
                         </form>
                         <form th:action="@{/usuarios/eliminar/{id}(id=${u.id})}" method="post" style="display:inline;">
                             <button class="btn btn-danger btn-sm" type="submit" data-confirm="¿Eliminar este usuario?">Eliminar</button>

@@ -219,6 +219,7 @@ body {
 .badge-activo { background: #c6f6d5; color: #22543d; }
 .badge-inactivo { background: #fed7d7; color: #742a2a; }
 .badge-info { background: #bee3f8; color: #2c5282; }
+.badge-peligro { background: #fbd38d; color: #7c2d12; }
 
 /* ===== Login ===== */
 .login-body {
