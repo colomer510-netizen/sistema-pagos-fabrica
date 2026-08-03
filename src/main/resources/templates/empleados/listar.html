@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Listado de empleados</span>
+            <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <form th:action="@{/empleados}" method="get" style="display:flex;gap:6px;">
+                    <input type="text" name="busqueda" th:value="${busqueda}"
+                           placeholder="Buscar por nombre, código, cargo..."
+                           style="padding:7px 10px;border:1px solid #dce2ea;border-radius:6px;">
+                    <button class="btn btn-outline" type="submit">Buscar</button>
+                </form>
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/empleados/nuevo}">+ Nuevo empleado</a>
+            </span>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre completo</th>
+                    <th>Cédula</th>
+                    <th>Cargo</th>
+                    <th>Departamento</th>
+                    <th>Tarifa/hora</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="e : ${empleados}">
+                    <td><strong th:text="${e.codigo}">EMP</strong></td>
+                    <td th:text="${e.nombreCompleto}">Nombre</td>
+                    <td th:text="${e.cedula} ?: '-'">Cédula</td>
+                    <td th:text="${e.cargo} ?: '-'">Cargo</td>
+                    <td th:text="${e.departamento}">Dep</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(e.tarifaHora, 1, 2)}">C$ 0.00</td>
+                    <td>
+                        <span class="badge" th:classappend="${e.activo} ? 'badge-activo' : 'badge-inactivo'"
+                              th:text="${e.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                    </td>
+                    <td>
+                        <a class="btn btn-outline btn-sm" th:href="@{/empleados/detalle/{id}(id=${e.id})}">Ver</a>
+                        <a sec:authorize="hasRole('ADMIN')" class="btn btn-warning btn-sm"
+                           th:href="@{/empleados/editar/{id}(id=${e.id})}">Editar</a>
+                        <a sec:authorize="hasRole('ADMIN')" class="btn btn-danger btn-sm"
+                           th:href="@{/empleados/eliminar/{id}(id=${e.id})}"
+                           data-confirm="¿Eliminar este empleado?">Eliminar</a>
+                    </td>
+                </tr>
+                <tr th:if="${empleados.isEmpty()}">
+                    <td colspan="8" style="text-align:center;color:#718096;padding:20px;">
+                        No hay empleados registrados.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

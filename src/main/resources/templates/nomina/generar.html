@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel" style="max-width:640px;">
+        <div class="panel-head">Generar nómina</div>
+        <div class="panel-body">
+            <div class="alerta alerta-info">
+                La nómina suma la asistencia de cada empleado en el periodo, calcula horas
+                normales y extras (según la jornada y días laborables), aplica la deducción
+                del INSS laboral y genera un recibo por empleado.
+            </div>
+            <form th:action="@{/nomina/generar}" method="post">
+                <div class="form-grid">
+                    <div class="campo">
+                        <label for="periodoInicio">Fecha de inicio</label>
+                        <input type="date" id="periodoInicio" name="periodoInicio" th:value="${periodoInicio}" required>
+                    </div>
+                    <div class="campo">
+                        <label for="periodoFin">Fecha de fin</label>
+                        <input type="date" id="periodoFin" name="periodoFin" th:value="${periodoFin}" required>
+                    </div>
+                </div>
+                <div class="form-acciones">
+                    <button type="submit" class="btn btn-primary">Generar nómina</button>
+                    <a class="btn btn-outline" th:href="@{/nomina}">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

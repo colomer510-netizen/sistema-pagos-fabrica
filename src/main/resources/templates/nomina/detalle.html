@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span th:text="'Nómina ' + ${nomina.numero}">Nómina</span>
+            <span style="display:flex;gap:8px;">
+                <a class="btn btn-warning btn-sm" th:href="@{/reportes/nomina.pdf(nominaId=${nomina.id})}">PDF completo</a>
+                <a class="btn btn-outline btn-sm" th:href="@{/reportes/nomina.xlsx(nominaId=${nomina.id})}">Excel</a>
+                <a class="btn btn-outline btn-sm" th:href="@{/nomina}">&larr; Volver</a>
+            </span>
+        </div>
+        <div class="panel-body">
+            <div class="grid-cards" style="margin-bottom:18px;">
+                <div class="card">
+                    <div class="card-titulo">Periodo</div>
+                    <div class="card-sub" th:text="${#temporals.format(nomina.periodoInicio, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(nomina.periodoFin, 'dd/MM/yyyy')}">periodo</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Empleados</div>
+                    <div class="card-valor" style="font-size:20px;" th:text="${nomina.totalEmpleados}">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Total horas</div>
+                    <div class="card-valor" style="font-size:20px;" th:text="${nomina.totalHoras}">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Total a pagar</div>
+                    <div class="card-valor" style="font-size:20px;" th:text="'C$ ' + ${#numbers.formatDecimal(nomina.totalPagar, 1, 2)}">C$ 0.00</div>
+                </div>
+            </div>
+
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Empleado</th>
+                    <th>H. normales</th>
+                    <th>H. extras</th>
+                    <th>Salario bruto</th>
+                    <th>INSS laboral</th>
+                    <th>Salario neto</th>
+                    <th>Recibo</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${recibos}">
+                    <td><strong th:text="${r.empleado.codigo}">EMP</strong></td>
+                    <td th:text="${r.empleado.nombreCompleto}">nombre</td>
+                    <td th:text="${r.horasNormales}">0</td>
+                    <td th:text="${r.horasExtras}">0</td>
+                    <td th:text="'C$ ' + ${#numbers.formatDecimal(r.salarioBruto, 1, 2)}">C$ 0.00</td>
+                    <td th:text="'C$ ' + ${#numbers.formatDecimal(r.descuentoInss, 1, 2)}">C$ 0.00</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(r.salarioNeto, 1, 2)}">C$ 0.00</td>
+                    <td>
+                        <a class="btn btn-outline btn-sm" th:href="@{/reportes/recibo/{id}.pdf(id=${r.id})}">Recibo PDF</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

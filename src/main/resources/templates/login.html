@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión - Sistema de Pagos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="login-body">
+<div class="login-box">
+    <h1>&#127981; Sistema de Pagos</h1>
+    <div class="subtitulo">Gestión de pagos de empleados de fábrica</div>
+
+    <th:block th:if="${mensajeError}">
+        <div class="alerta alerta-error" th:text="${mensajeError}">Error</div>
+    </th:block>
+    <th:block th:if="${mensajeExito}">
+        <div class="alerta alerta-exito" th:text="${mensajeExito}">Éxito</div>
+    </th:block>
+
+    <form th:action="@{/login}" method="post">
+        <div class="campo">
+            <label for="username">Usuario</label>
+            <input type="text" id="username" name="username" required autofocus>
+        </div>
+        <div class="campo">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Ingresar</button>
+    </form>
+
+    <div style="margin-top:18px;font-size:12px;color:#718096;text-align:center;">
+        Acceso inicial: <strong>admin</strong> / <strong>admin123</strong>
+    </div>
+</div>
+</body>
+</html>

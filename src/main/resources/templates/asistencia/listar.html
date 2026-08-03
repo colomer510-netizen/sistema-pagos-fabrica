@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Registro de asistencia</span>
+            <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <form th:action="@{/asistencia}" method="get" style="display:flex;gap:6px;align-items:center;">
+                    <label style="font-size:13px;">Mes:</label>
+                    <input type="month" name="fecha" th:value="${inicio != null ? #temporals.format(inicio, 'yyyy-MM') : ''}"
+                           style="padding:7px 10px;border:1px solid #dce2ea;border-radius:6px;">
+                    <button class="btn btn-outline" type="submit">Filtrar</button>
+                </form>
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/asistencia/registrar}">+ Registrar asistencia</a>
+            </span>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Código</th>
+                    <th>Empleado</th>
+                    <th>Horas trabajadas</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${registros}">
+                    <td th:text="${#temporals.format(a.fecha, 'dd/MM/yyyy')}">fecha</td>
+                    <td><strong th:text="${a.empleado.codigo}">EMP</strong></td>
+                    <td th:text="${a.empleado.nombreCompleto}">nombre</td>
+                    <td th:text="${a.horasTrabajadas} + ' h'">0 h</td>
+                    <td>
+                        <span class="badge badge-info" th:text="${a.estado}">P</span>
+                    </td>
+                    <td>
+                        <a sec:authorize="hasRole('ADMIN')" class="btn btn-danger btn-sm"
+                           th:href="@{/asistencia/eliminar/{id}(id=${a.id})}"
+                           data-confirm="¿Eliminar este registro de asistencia?">Eliminar</a>
+                    </td>
+                </tr>
+                <tr th:if="${registros.isEmpty()}">
+                    <td colspan="6" style="text-align:center;color:#718096;padding:20px;">
+                        No hay registros de asistencia en el periodo seleccionado.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+# Compilación
+target/
+*.class
+*.jar
+!target/*.jar
+
+# Base de datos local
+data/
+
+# IDE / SO
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Archivos comprimidos
+*.rar
+*.zip

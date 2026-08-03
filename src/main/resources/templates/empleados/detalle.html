@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel" style="max-width:720px;">
+        <div class="panel-head">
+            <span th:text="${empleado.codigo} + ' - ' + ${empleado.nombreCompleto}">Empleado</span>
+            <a class="btn btn-outline btn-sm" th:href="@{/empleados}">&larr; Volver</a>
+        </div>
+        <div class="panel-body">
+            <table class="tabla">
+                <tbody>
+                <tr><th style="width:200px;">Código</th><td th:text="${empleado.codigo}">-</td></tr>
+                <tr><th>Nombre</th><td th:text="${empleado.nombre}">-</td></tr>
+                <tr><th>Apellido</th><td th:text="${empleado.apellido}">-</td></tr>
+                <tr><th>Cédula</th><td th:text="${empleado.cedula} ?: '-'">-</td></tr>
+                <tr><th>Teléfono</th><td th:text="${empleado.telefono} ?: '-'">-</td></tr>
+                <tr><th>Dirección</th><td th:text="${empleado.direccion} ?: '-'">-</td></tr>
+                <tr><th>Cargo</th><td th:text="${empleado.cargo} ?: '-'">-</td></tr>
+                <tr><th>Departamento</th><td th:text="${empleado.departamento}">-</td></tr>
+                <tr><th>Tarifa por hora</th><td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(empleado.tarifaHora, 1, 2)}">-</td></tr>
+                <tr><th>Horas por jornada</th><td th:text="${empleado.horasJornada}">-</td></tr>
+                <tr><th>Fecha de contratación</th><td th:text="${#temporals.format(empleado.fechaContratacion, 'dd/MM/yyyy')}">-</td></tr>
+                <tr><th>Estado</th>
+                    <td><span class="badge" th:classappend="${empleado.activo} ? 'badge-activo' : 'badge-inactivo'"
+                              th:text="${empleado.activo} ? 'Activo' : 'Inactivo'">-</span></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="form-acciones">
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-warning" th:href="@{/empleados/editar/{id}(id=${empleado.id})}">Editar</a>
+                <a class="btn btn-outline" th:href="@{/contabilidad/calcular/{id}(id=${empleado.id})}">Cálculo contable</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

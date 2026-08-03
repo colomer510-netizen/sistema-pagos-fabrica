@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel" style="max-width:860px;">
+        <div class="panel-head" th:text="${modo == 'nuevo'} ? 'Nuevo empleado' : 'Editar empleado'">
+            Formulario
+        </div>
+        <div class="panel-body">
+            <form th:action="@{/empleados/guardar}" th:object="${empleado}" method="post">
+                <input type="hidden" th:field="*{id}">
+                <div class="form-grid">
+                    <div class="campo">
+                        <label for="codigo">Código único</label>
+                        <input type="text" id="codigo" th:field="*{codigo}" required>
+                        <span class="error" th:if="${errorCodigo}" th:text="${errorCodigo}"></span>
+                        <span class="error" th:if="${#fields.hasErrors('codigo')}" th:errors="*{codigo}"></span>
+                    </div>
+                    <div class="campo">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" th:field="*{nombre}" required>
+                        <span class="error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
+                    </div>
+                    <div class="campo">
+                        <label for="apellido">Apellido</label>
+                        <input type="text" id="apellido" th:field="*{apellido}" required>
+                        <span class="error" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></span>
+                    </div>
+                    <div class="campo">
+                        <label for="cedula">Cédula</label>
+                        <input type="text" id="cedula" th:field="*{cedula}" placeholder="000-000000-0000X">
+                    </div>
+                    <div class="campo">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" id="telefono" th:field="*{telefono}">
+                    </div>
+                    <div class="campo">
+                        <label for="direccion">Dirección</label>
+                        <input type="text" id="direccion" th:field="*{direccion}">
+                    </div>
+                    <div class="campo">
+                        <label for="cargo">Cargo</label>
+                        <input type="text" id="cargo" th:field="*{cargo}">
+                    </div>
+                    <div class="campo">
+                        <label for="departamento">Departamento</label>
+                        <input type="text" id="departamento" th:field="*{departamento}" required>
+                    </div>
+                    <div class="campo">
+                        <label for="tarifaHora">Tarifa por hora (C$)</label>
+                        <input type="number" id="tarifaHora" th:field="*{tarifaHora}" step="0.01" min="0" required>
+                        <span class="error" th:if="${#fields.hasErrors('tarifaHora')}" th:errors="*{tarifaHora}"></span>
+                    </div>
+                    <div class="campo">
+                        <label for="horasJornada">Horas por jornada</label>
+                        <input type="number" id="horasJornada" th:field="*{horasJornada}" min="1" max="12">
+                    </div>
+                    <div class="campo">
+                        <label for="fechaContratacion">Fecha de contratación</label>
+                        <input type="date" id="fechaContratacion" th:field="*{fechaContratacion}" required>
+                    </div>
+                    <div class="campo">
+                        <label for="activo">Estado</label>
+                        <select id="activo" th:field="*{activo}">
+                            <option th:value="true">Activo</option>
+                            <option th:value="false">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-acciones">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline" th:href="@{/empleados}">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

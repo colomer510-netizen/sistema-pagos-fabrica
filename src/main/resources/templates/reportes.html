@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="grid-cards">
+        <div class="card">
+            <div class="card-titulo">Fecha de hoy</div>
+            <div class="card-sub" th:text="${hoy}">dd/MM/yyyy</div>
+        </div>
+        <div class="card">
+            <div class="card-titulo">Nóminas disponibles</div>
+            <div class="card-sub" th:text="${#lists.size(nominas)} + ' registradas'">0 registradas</div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-head">Descargas en Excel (.xlsx)</div>
+        <div class="panel-body">
+            <div class="grid-cards">
+                <div class="card">
+                    <div class="card-titulo">Empleados</div>
+                    <div class="card-sub">Listado completo de empleados con tarifas y datos</div>
+                    <div style="margin-top:14px;">
+                        <a class="btn btn-success" th:href="@{/reportes/empleados.xlsx}">&#11015; Descargar Excel</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Nómina en Excel</div>
+                    <div class="card-sub">Recibos de una nómina específica en hoja de cálculo</div>
+                    <div style="margin-top:14px;">
+                        <form th:action="@{/reportes/nomina.xlsx}" method="get" style="display:flex;gap:6px;flex-wrap:wrap;">
+                            <select name="nominaId" style="padding:7px;border:1px solid #dce2ea;border-radius:6px;">
+                                <option value="" th:text="'Todas las nóminas'">Todas</option>
+                                <option th:each="n : ${nominas}" th:value="${n.id}"
+                                        th:text="${n.numero} + ' (' + ${#temporals.format(n.periodoInicio, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(n.periodoFin, 'dd/MM/yyyy')} + ')'"></option>
+                            </select>
+                            <button class="btn btn-success" type="submit">&#11015; Descargar Excel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-head">Descargas en PDF</div>
+        <div class="panel-body">
+            <div class="grid-cards">
+                <div class="card">
+                    <div class="card-titulo">Nómina en PDF</div>
+                    <div class="card-sub">Reporte de una nómina con totales</div>
+                    <div style="margin-top:14px;">
+                        <form th:action="@{/reportes/nomina.pdf}" method="get" style="display:flex;gap:6px;flex-wrap:wrap;">
+                            <select name="nominaId" required style="padding:7px;border:1px solid #dce2ea;border-radius:6px;">
+                                <option value="" th:text="'Seleccionar nómina...'">Seleccionar</option>
+                                <option th:each="n : ${nominas}" th:value="${n.id}"
+                                        th:text="${n.numero} + ' (' + ${#temporals.format(n.periodoInicio, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(n.periodoFin, 'dd/MM/yyyy')} + ')'"></option>
+                            </select>
+                            <button class="btn btn-warning" type="submit">&#11015; Descargar PDF</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Recibos individuales</div>
+                    <div class="card-sub">Cada recibo se descarga desde el detalle de la nómina</div>
+                    <div style="margin-top:14px;">
+                        <a class="btn btn-warning" th:href="@{/nomina}">Ir a nóminas</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

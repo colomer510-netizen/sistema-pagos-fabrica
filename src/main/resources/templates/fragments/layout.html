@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} ?: 'Sistema de Pagos'">Sistema de Pagos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand">&#127981; Sistema de Pagos</div>
+        <nav>
+            <a th:href="@{/dashboard}" th:classappend="${activo == 'dashboard'} ? 'activo'">Inicio</a>
+            <a th:href="@{/empleados}" th:classappend="${activo == 'empleados'} ? 'activo'">Empleados</a>
+            <a th:href="@{/asistencia}" th:classappend="${activo == 'asistencia'} ? 'activo'">Asistencia</a>
+            <a th:href="@{/nomina}" th:classappend="${activo == 'nomina'} ? 'activo'">Nómina</a>
+            <a th:href="@{/contabilidad}" th:classappend="${activo == 'contabilidad'} ? 'activo'">Contabilidad</a>
+            <a th:href="@{/reportes}" th:classappend="${activo == 'reportes'} ? 'activo'">Reportes</a>
+        </nav>
+        <div class="footer">
+            <div>Usuario: <strong th:text="${#authentication.name}">admin</strong></div>
+            <div sec:authorize="hasRole('ADMIN')">Rol: Administrador</div>
+            <div sec:authorize="hasRole('LECTOR')">Rol: Solo lectura</div>
+            <a th:href="@{/logout}">Cerrar sesión</a>
+        </div>
+    </aside>
+    <main class="main">
+        <div class="topbar">
+            <h1 th:text="${titulo} ?: 'Panel de control'">Panel</h1>
+            <span class="usuario">Bienvenido, <strong th:text="${#authentication.name}">usuario</strong></span>
+        </div>
+
+        <th:block th:if="${mensajeExito}">
+            <div class="alerta alerta-exito" th:text="${mensajeExito}">Éxito</div>
+        </th:block>
+        <th:block th:if="${mensajeError}">
+            <div class="alerta alerta-error" th:text="${mensajeError}">Error</div>
+        </th:block>
+        <th:block th:if="${mensajeInfo}">
+            <div class="alerta alerta-info" th:text="${mensajeInfo}">Info</div>
+        </th:block>
+
+        <div th:replace="~{::contenido}"></div>
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="grid-cards">
+        <div class="card">
+            <div class="card-titulo">Empleado</div>
+            <div class="card-sub" th:text="${empleado.nombreCompleto}">nombre</div>
+        </div>
+        <div class="card">
+            <div class="card-titulo">Código</div>
+            <div class="card-sub" th:text="${empleado.codigo}">codigo</div>
+        </div>
+        <div class="card">
+            <div class="card-titulo">Antigüedad</div>
+            <div class="card-sub" th:text="${meses} + ' meses (' + ${anios} + ' años)'">meses</div>
+        </div>
+        <div class="card">
+            <div class="card-titulo">Tarifa por hora</div>
+            <div class="card-sub" th:text="'C$ ' + ${#numbers.formatDecimal(empleado.tarifaHora, 1, 2)}">C$ 0.00</div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-head">Pago mensual estimado (jornada de 30 días, 6 h extras)</div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <tbody>
+                <tr><th>Horas normales (jornada x 30)</th><td th:text="${horasNormales} + ' h'">0 h</td></tr>
+                <tr><th>Horas extras estimadas</th><td th:text="${horasExtras} + ' h'">0 h</td></tr>
+                <tr><th>Salario bruto</th><td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(bruto, 1, 2)}">C$ 0.00</td></tr>
+                <tr>
+                    <th th:text="'INSS laboral (' + ${inssPorcentaje} + '%)'">INSS laboral</th>
+                    <td class="moneda" th:text="'- C$ ' + ${#numbers.formatDecimal(inssLaboral, 1, 2)}">- C$ 0.00</td>
+                </tr>
+                <tr class="total-fila">
+                    <th>Salario neto</th>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(neto, 1, 2)}">C$ 0.00</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-head">Prestaciones acumuladas (costo para el empleador)</div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <tbody>
+                <tr>
+                    <th th:text="'INSS patronal (' + ${inssPatronalPorcentaje} + '%)'">INSS patronal</th>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(inssPatronal, 1, 2)}">C$ 0.00</td>
+                </tr>
+                <tr><th>Vacaciones acumuladas (15 días por 6 meses)</th>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(vacaciones, 1, 2)}">C$ 0.00</td></tr>
+                <tr><th>Aguinaldo proporcional (12 meses)</th>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(aguinaldo, 1, 2)}">C$ 0.00</td></tr>
+                <tr><th>Indemnización (1 mes por año)</th>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(indemnizacion, 1, 2)}">C$ 0.00</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="form-acciones">
+        <a class="btn btn-outline" th:href="@{/contabilidad}">&larr; Volver al listado</a>
+        <a class="btn btn-primary" th:href="@{/empleados/detalle/{id}(id=${empleado.id})}">Ver perfil</a>
+    </div>
+</div>
+</body>
+</html>

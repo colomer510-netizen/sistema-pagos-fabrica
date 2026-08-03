@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="alerta alerta-info">
+        Panel contable: calcula el pago mensual estimado (jornada + horas extras), el INSS
+        laboral y patronal, y las prestaciones acumuladas del trabajador según su antigüedad.
+    </div>
+    <div class="panel">
+        <div class="panel-head">
+            <span>Selecciona un empleado para calcular</span>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Empleado</th>
+                    <th>Cargo</th>
+                    <th>Departamento</th>
+                    <th>Tarifa/hora</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="e : ${empleados}">
+                    <td><strong th:text="${e.codigo}">EMP</strong></td>
+                    <td th:text="${e.nombreCompleto}">nombre</td>
+                    <td th:text="${e.cargo} ?: '-'">cargo</td>
+                    <td th:text="${e.departamento}">dep</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(e.tarifaHora, 1, 2)}">C$ 0.00</td>
+                    <td>
+                        <span class="badge" th:classappend="${e.activo} ? 'badge-activo' : 'badge-inactivo'"
+                              th:text="${e.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                    </td>
+                    <td>
+                        <a class="btn btn-primary btn-sm" th:href="@{/contabilidad/calcular/{id}(id=${e.id})}">Calcular</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

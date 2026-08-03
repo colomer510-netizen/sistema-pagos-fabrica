@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="grid-cards">
+        <div class="card">
+            <div class="card-titulo">Total de empleados</div>
+            <div class="card-valor" th:text="${totalEmpleados}">0</div>
+            <div class="card-sub" th:text="${totalEmpleadosActivos} + ' activos'">0 activos</div>
+        </div>
+        <div class="card">
+            <div class="card-titulo">Nóminas generadas</div>
+            <div class="card-valor" th:text="${totalNominas}">0</div>
+            <div class="card-sub">historial de periodos</div>
+        </div>
+        <div class="card">
+            <div class="card-titulo">Última nómina</div>
+            <div class="card-valor" style="font-size:18px;"
+                  th:text="${ultimaNomina != null ? ultimaNomina.numero : 'Sin nómina'}">NOM</div>
+            <div class="card-sub" th:if="${ultimaNomina != null}"
+                  th:text="${#temporals.format(ultimaNomina.periodoInicio, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(ultimaNomina.periodoFin, 'dd/MM/yyyy')}">periodo</div>
+        </div>
+        <div class="card">
+            <div class="card-titulo">Total pagado (última)</div>
+            <div class="card-valor" th:text="'C$ ' + ${#numbers.formatDecimal(ultimoTotalPagado, 1, 2)}">C$ 0.00</div>
+            <div class="card-sub" th:if="${ultimaNomina != null}"
+                  th:text="${ultimaNomina.totalEmpleados} + ' empleados'">0 empleados</div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-head">
+            <span>Últimas nóminas generadas</span>
+            <a class="btn btn-primary btn-sm" th:href="@{/nomina/generar}">+ Generar nómina</a>
+        </div>
+        <div class="panel-body">
+            <table class="tabla" th:if="${!ultimasNominas.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Periodo</th>
+                    <th>Empleados</th>
+                    <th>Total horas</th>
+                    <th>Total a pagar</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="n : ${ultimasNominas}">
+                    <td th:text="${n.numero}">NOM</td>
+                    <td th:text="${#temporals.format(n.periodoInicio, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(n.periodoFin, 'dd/MM/yyyy')}">periodo</td>
+                    <td th:text="${n.totalEmpleados}">0</td>
+                    <td th:text="${n.totalHoras}">0</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(n.totalPagar, 1, 2)}">C$ 0.00</td>
+                    <td>
+                        <a class="btn btn-outline btn-sm" th:href="@{/nomina/detalle/{id}(id=${n.id})}">Ver</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <p th:if="${ultimasNominas.isEmpty()}" style="color:#718096;text-align:center;padding:20px;">
+                Aún no hay nóminas. Registra asistencia y genera tu primera nómina.
+            </p>
+        </div>
+    </div>
+
+    <div class="grid-cards">
+        <a class="card" style="text-decoration:none;color:inherit;" th:href="@{/empleados}">
+            <div class="card-titulo">Gestionar empleados</div>
+            <div class="card-sub">Alta, edición y consulta de trabajadores</div>
+        </a>
+        <a class="card" style="text-decoration:none;color:inherit;" th:href="@{/asistencia}">
+            <div class="card-titulo">Registrar asistencia</div>
+            <div class="card-sub">Control de horas trabajadas por día</div>
+        </a>
+        <a class="card" style="text-decoration:none;color:inherit;" th:href="@{/contabilidad}">
+            <div class="card-titulo">Cálculos contables</div>
+            <div class="card-sub">INSS, vacaciones, aguinaldo, indemnización</div>
+        </a>
+        <a class="card" style="text-decoration:none;color:inherit;" th:href="@{/reportes}">
+            <div class="card-titulo">Reportes</div>
+            <div class="card-sub">Exportar a Excel y PDF</div>
+        </a>
+    </div>
+</div>
+</body>
+</html>

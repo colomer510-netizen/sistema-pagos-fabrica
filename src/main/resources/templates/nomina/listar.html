@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Nóminas generadas</span>
+            <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/nomina/generar}">+ Generar nómina</a>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Periodo</th>
+                    <th>Empleados</th>
+                    <th>Total horas</th>
+                    <th>Total a pagar</th>
+                    <th>Fecha generación</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="n : ${nominas}">
+                    <td><strong th:text="${n.numero}">NOM</strong></td>
+                    <td th:text="${#temporals.format(n.periodoInicio, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(n.periodoFin, 'dd/MM/yyyy')}">periodo</td>
+                    <td th:text="${n.totalEmpleados}">0</td>
+                    <td th:text="${n.totalHoras}">0</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(n.totalPagar, 1, 2)}">C$ 0.00</td>
+                    <td th:text="${#temporals.format(n.fechaGeneracion, 'dd/MM/yyyy HH:mm')}">fecha</td>
+                    <td>
+                        <a class="btn btn-outline btn-sm" th:href="@{/nomina/detalle/{id}(id=${n.id})}">Ver recibos</a>
+                        <a class="btn btn-warning btn-sm" th:href="@{/reportes/nomina.pdf(nominaId=${n.id})}">PDF</a>
+                        <a sec:authorize="hasRole('ADMIN')" class="btn btn-danger btn-sm"
+                           th:href="@{/nomina/eliminar/{id}(id=${n.id})}"
+                           data-confirm="¿Eliminar esta nómina?">Eliminar</a>
+                    </td>
+                </tr>
+                <tr th:if="${nominas.isEmpty()}">
+                    <td colspan="7" style="text-align:center;color:#718096;padding:20px;">
+                        Aún no hay nóminas generadas.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
