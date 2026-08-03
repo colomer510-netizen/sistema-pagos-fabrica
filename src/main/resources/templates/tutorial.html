@@ -40,7 +40,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="tutorial-nota">Es importante que el administrador cambie estas contraseñas en la base de datos al iniciar el sistema en producción.</div>
+                <div class="tutorial-nota">Es importante que el administrador cambie estas contraseñas en la base de datos al iniciar el sistema en producción. Desde la sección <strong>Usuarios</strong> puedes crear más cuentas con rol Administrador o Solo lectura.</div>
             </div>
         </section>
 
@@ -99,13 +99,16 @@
                 <ol>
                     <li>Ve a <strong>Nómina</strong> y presiona <span class="btn btn-primary btn-sm">+ Generar nómina</span>.</li>
                     <li>Elige la <strong>fecha de inicio</strong> y <strong>fecha de fin</strong> del periodo (por ejemplo, del 1 al 30 del mes).</li>
-                    <li>Presiona <span class="btn btn-primary btn-sm">Generar nómina</span>.</li>
+                    <li>Presiona <span class="btn btn-outline btn-sm">Ver vista previa</span> para revisar el cálculo estimado sin guardar nada. Verás una tabla con las horas, deducciones y el neto de cada empleado.</li>
+                    <li>Si todo se ve bien, presiona <span class="btn btn-primary btn-sm">Confirmar y generar</span> para guardar la nómina.</li>
                     <li>El sistema calculará por cada empleado:
                         <ul>
                             <li><strong>Horas normales</strong>: las horas dentro de la jornada esperada.</li>
                             <li><strong>Horas extras</strong>: las que exceden la jornada diaria por día laborable.</li>
                             <li><strong>Salario bruto</strong>: horas normales + horas extras, multiplicadas por la tarifa.</li>
                             <li><strong>INSS laboral</strong>: deducción de seguridad social (7% configurable).</li>
+                            <li><strong>Otras deducciones</strong>: las configuradas en la sección <strong>Deducciones</strong> (impuesto sobre la renta, otros descuentos).</li>
+                            <li><strong>Cuota de préstamo</strong>: si el empleado tiene un préstamo activo, se descuenta su cuota (como máximo el saldo restante).</li>
                             <li><strong>Salario neto</strong>: lo que recibe el trabajador después de descuentos.</li>
                         </ul>
                     </li>
@@ -146,12 +149,96 @@
         <section class="tutorial-seccion">
             <div class="tutorial-numero">7</div>
             <div class="tutorial-cuerpo">
+                <h3>Gestionar deducciones</h3>
+                <p>Las deducciones se aplican automáticamente a cada nómina. Puedes configurar cuáles están activas y su tipo de cálculo.</p>
+                <ol>
+                    <li>Ve a <strong>Deducciones</strong> en el menú.</li>
+                    <li>Presiona <span class="btn btn-primary btn-sm">+ Nueva deducción</span>.</li>
+                    <li>Completa el formulario:
+                        <ul>
+                            <li><strong>Nombre</strong>: por ejemplo "INSS laboral" o "Impuesto sobre la renta".</li>
+                            <li><strong>Tipo de cálculo</strong>: <strong>PORCENTAJE</strong> aplica un porcentaje fijo sobre el salario bruto; <strong>IR</strong> aplica el impuesto sobre la renta progresivo.</li>
+                            <li><strong>Porcentaje (%)</strong>: solo si el tipo es PORCENTAJE.</li>
+                            <li><strong>Estado</strong>: marca <strong>Activa</strong> para que se aplique en la próxima nómina.</li>
+                        </ul>
+                    </li>
+                </ol>
+                <div class="tutorial-nota">El INSS laboral (7%) viene configurado de fábrica. Verifica que solo haya una deducción de INSS activa para no descontarla dos veces. Cada deducción aparece en el desglose del recibo y en su PDF.</div>
+            </div>
+        </section>
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">8</div>
+            <div class="tutorial-cuerpo">
+                <h3>Gestionar préstamos</h3>
+                <p>Puedes registrar préstamos a los empleados y el sistema descuenta la cuota automáticamente al generar la nómina.</p>
+                <ol>
+                    <li>Ve a <strong>Préstamos</strong> y presiona <span class="btn btn-primary btn-sm">+ Nuevo préstamo</span>.</li>
+                    <li>Selecciona el <strong>empleado</strong>, escribe una <strong>descripción</strong>, el <strong>monto total</strong> (C$), la <strong>cuota por nómina</strong> (C$) y la <strong>fecha</strong>.</li>
+                    <li>Guarda el préstamo. Al generar una nómina, la cuota se descuenta del salario y el saldo se actualiza (nunca descuenta más que el saldo restante).</li>
+                    <li>Desde la lista puedes hacer un <strong>abono</strong> manual o <strong>liquidar</strong> el préstamo para saldarlo y desactivarlo.</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">9</div>
+            <div class="tutorial-cuerpo">
+                <h3>Usuarios y permisos</h3>
+                <p>El administrador puede crear cuentas y controlar quién accede al sistema.</p>
+                <ol>
+                    <li>Ve a <strong>Usuarios</strong> y presiona <span class="btn btn-primary btn-sm">+ Nuevo usuario</span>.</li>
+                    <li>Completa <strong>usuario</strong>, <strong>nombre completo</strong>, <strong>contraseña</strong> y <strong>rol</strong>:
+                        <ul>
+                            <li><strong>Administrador</strong>: puede crear, editar, eliminar y exportar.</li>
+                            <li><strong>Solo lectura</strong>: puede consultar y exportar, pero no modificar.</li>
+                        </ul>
+                    </li>
+                    <li>Puedes <strong>desactivar</strong> un usuario en lugar de eliminarlo, para conservar su historial.</li>
+                </ol>
+                <div class="tutorial-nota">No puedes eliminar ni desactivar tu propio usuario para evitar quedarte sin acceso.</div>
+            </div>
+        </section>
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">10</div>
+            <div class="tutorial-cuerpo">
+                <h3>Respaldos de la base de datos</h3>
+                <p>El sistema puede crear copias de seguridad de toda la información.</p>
+                <ol>
+                    <li>Ve a <strong>Respaldos</strong> en el menú.</li>
+                    <li>Presiona <span class="btn btn-primary btn-sm">+ Crear respaldo ahora</span>.</li>
+                    <li>Se genera una copia en la carpeta <code>data/backups</code> del servidor.</li>
+                    <li>Desde la lista puedes <strong>descargar</strong> cada respaldo para guardarlo en otro lugar.</li>
+                </ol>
+                <div class="tutorial-nota">Haz respaldos periódicos, especialmente antes de generar nóminas importantes o actualizar el sistema.</div>
+            </div>
+        </section>
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">11</div>
+            <div class="tutorial-cuerpo">
+                <h3>Reporte de asistencia</h3>
+                <p>Además de los reportes de empleados y nóminas, puedes consultar un resumen de la asistencia por periodo.</p>
+                <ol>
+                    <li>Ve a <strong>Reportes</strong> y abre la sección de <strong>Asistencia</strong>.</li>
+                    <li>Elige la <strong>fecha de inicio</strong> y <strong>fecha de fin</strong>.</li>
+                    <li>Consulta el resumen por empleado (horas registradas, faltas, etc.) en pantalla.</li>
+                    <li>Descárgalo en <strong>Excel</strong> o <strong>PDF</strong> con los botones de la parte superior.</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">12</div>
+            <div class="tutorial-cuerpo">
                 <h3>Consejos rápidos</h3>
                 <ul>
                     <li>Registra la asistencia <strong>todos los días</strong> para que las nóminas sean exactas.</li>
                     <li>La tarifa por hora y las horas de jornada son la clave del cálculo: revísalas al crear cada empleado.</li>
-                    <li>Usa la <strong>búsqueda</strong> en el listado de empleados para encontrar a un trabajador rápido.</li>
-                    <li>Los porcentajes (INSS laboral y patronal) se configuran en el archivo <code>application.properties</code>.</li>
+                    <li>Usa la <strong>vista previa</strong> antes de generar una nómina para detectar errores sin guardar.</li>
+                    <li>Mantén solo las deducciones que realmente aplican en <strong>Activa</strong> para evitar descuentos dobles.</li>
+                    <li>Haz <strong>respaldos</strong> periódicos de la base de datos.</li>
                     <li>Si algo sale mal al generar una nómina, el sistema te avisa con un mensaje: léelo con atención.</li>
                 </ul>
             </div>
