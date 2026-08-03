@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span>Inventario de materiales</span>
+            <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <form th:action="@{/inventario}" method="get" style="display:flex;gap:6px;align-items:center;">
+                    <select name="bajo" style="padding:7px 10px;border:1px solid #dce2ea;border-radius:6px;">
+                        <option value="">Todos</option>
+                        <option value="true" th:selected="${filtroBajo}">Solo en stock bajo</option>
+                    </select>
+                    <button class="btn btn-outline" type="submit">Filtrar</button>
+                </form>
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/inventario/nuevo}">+ Nuevo material</a>
+            </span>
+        </div>
+        <div class="panel-body">
+            <div class="grid-cards" style="margin-bottom:16px;">
+                <div class="card">
+                    <div class="card-titulo">Materiales registrados</div>
+                    <div class="card-valor" th:text="${totalMateriales}">0</div>
+                    <div class="card-sub">en el catálogo</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Valor del inventario</div>
+                    <div class="card-valor" style="color:var(--verde);"
+                         th:text="'C$ ' + ${#numbers.formatDecimal(valorInventario, 1, 2)}">C$ 0.00</div>
+                    <div class="card-sub">stock x precio unitario</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">En stock bajo</div>
+                    <div class="card-valor" th:style="'color:' + (${bajoStock > 0} ? 'var(--rojo)' : 'var(--verde)') + ';'"
+                         th:text="${bajoStock}">0</div>
+                    <div class="card-sub">materiales bajo el mínimo</div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Unidad</th>
+                    <th>Stock actual</th>
+                    <th>Stock mínimo</th>
+                    <th>Precio unitario</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="m : ${materiales}">
+                    <td th:text="${m.codigo}">MAT-001</td>
+                    <td><strong th:text="${m.nombre}">material</strong></td>
+                    <td th:text="${m.unidad}">UN</td>
+                    <td class="moneda"
+                        th:style="'color:' + (${m.bajoStock} ? 'var(--rojo)' : '') + ';font-weight:bold;'"
+                        th:text="${#numbers.formatDecimal(m.stockActual, 1, 2)}">0.00</td>
+                    <td th:text="${#numbers.formatDecimal(m.stockMinimo, 1, 2)}">0.00</td>
+                    <td class="moneda" th:text="'C$ ' + ${#numbers.formatDecimal(m.precioUnitario, 1, 2)}">C$ 0.00</td>
+                    <td>
+                        <span class="badge" th:classappend="${m.bajoStock} ? 'badge-peligro' : 'badge-activo'"
+                              th:text="${m.bajoStock} ? 'STOCK BAJO' : 'OK'">OK</span>
+                    </td>
+                    <td>
+                        <a class="btn btn-outline btn-sm" th:href="@{/inventario/detalle/{id}(id=${m.id})}">Ver</a>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/inventario/eliminar/{id}(id=${m.id})}" method="post"
+                              style="display:inline;" data-confirm="¿Eliminar este material?">
+                            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${materiales.isEmpty()}">
+                    <td colspan="8" style="text-align:center;color:#718096;padding:20px;">
+                        No hay materiales registrados.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

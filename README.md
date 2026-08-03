@@ -9,6 +9,7 @@ Desarrollada con **Spring Boot**, **Thymeleaf**, **Spring Security**, **JPA/Hibe
 - **Empleados**: alta, edición, eliminación, foto, contacto de emergencia, tipo de sangre y consulta de detalle.
 - **Expediente digital**: sube, descarga y elimina documentos por empleado (contratos, cédulas, constancias...).
 - **Asistencia**: registro diario por empleado (Presente, Enfermedad, Vacaciones, Falta) y control de horas.
+- **Inventario de materiales**: catálogo de materiales con stock, stock mínimo, precio y valor de inventario, más entradas/salidas con historial y alerta de stock bajo.
 - **Permisos y vacaciones**: solicitudes de vacaciones/permisos con fechas, cálculo automático de días y aprobación/rechazo.
 - **Evaluaciones de desempeño**: puntaje de 0-100 por periodo con calificación automática (EXCELENTE/BUENO/REGULAR/INSUFICIENTE).
 - **Liquidaciones**: cálculo automático al terminar la relación laboral (vacaciones pendientes, indemnización por despido) y baja del empleado.
@@ -105,6 +106,7 @@ La base de datos se crea automáticamente en `data/fabrica.db`. Los respaldos se
 | Empleados | `/empleados` |
 | Expediente digital | `/empleados/detalle/{id}` |
 | Asistencia | `/asistencia` |
+| Inventario de materiales | `/inventario` |
 | Permisos y vacaciones | `/permisos` |
 | Evaluaciones | `/evaluaciones` |
 | Nóminas | `/nomina` |

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel">
+        <div class="panel-head">
+            <span th:text="${material.codigo} + ' - ' + ${material.nombre}">material</span>
+            <a class="btn btn-outline" th:href="@{/inventario}">Volver</a>
+        </div>
+        <div class="panel-body">
+            <div class="grid-cards" style="margin-bottom:16px;">
+                <div class="card">
+                    <div class="card-titulo">Stock actual</div>
+                    <div class="card-valor"
+                         th:style="'color:' + (${material.bajoStock} ? 'var(--rojo)' : 'var(--verde)') + ';'"
+                         th:text="${#numbers.formatDecimal(material.stockActual, 1, 2)} + ' ' + ${material.unidad}">0</div>
+                    <div class="card-sub" th:text="'Stock mínimo: ' + ${#numbers.formatDecimal(material.stockMinimo, 1, 2)}">mínimo</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Precio unitario</div>
+                    <div class="card-valor" th:text="'C$ ' + ${#numbers.formatDecimal(material.precioUnitario, 1, 2)}">C$ 0.00</div>
+                    <div class="card-sub" th:text="'Valor total: C$ ' + ${#numbers.formatDecimal(material.valorInventario, 1, 2)}">valor</div>
+                </div>
+                <div class="card">
+                    <div class="card-titulo">Estado</div>
+                    <div class="card-valor" style="font-size:18px;"
+                         th:style="'font-size:18px;color:' + (${material.bajoStock} ? 'var(--rojo)' : 'var(--verde)') + ';'"
+                         th:text="${material.bajoStock} ? 'STOCK BAJO' : 'OK'">OK</div>
+                    <div class="card-sub">según el stock mínimo</div>
+                </div>
+            </div>
+
+            <div sec:authorize="hasRole('ADMIN')" class="panel" style="margin-bottom:16px;background:#f8fafc;">
+                <div class="panel-head">Registrar entrada o salida</div>
+                <div class="panel-body">
+                    <form th:action="@{/inventario/movimiento}" method="post" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+                        <input type="hidden" name="materialId" th:value="${material.id}">
+                        <div class="campo" style="margin:0;">
+                            <label>Tipo</label>
+                            <select name="tipo" style="padding:8px 10px;border:1px solid #dce2ea;border-radius:6px;">
+                                <option value="ENTRADA">Entrada</option>
+                                <option value="SALIDA">Salida</option>
+                            </select>
+                        </div>
+                        <div class="campo" style="margin:0;">
+                            <label>Cantidad</label>
+                            <input type="number" name="cantidad" step="0.01" min="0.01" required
+                                   style="padding:8px 10px;border:1px solid #dce2ea;border-radius:6px;width:100px;">
+                        </div>
+                        <div class="campo" style="margin:0;">
+                            <label>Fecha</label>
+                            <input type="date" name="fecha" th:value="${#temporals.format(material.fechaRegistro, 'yyyy-MM-dd')}"
+                                   style="padding:8px 10px;border:1px solid #dce2ea;border-radius:6px;">
+                        </div>
+                        <div class="campo" style="margin:0;flex:1;min-width:180px;">
+                            <label>Motivo</label>
+                            <input type="text" name="motivo" placeholder="Compra, consumo de producción..."
+                                   style="padding:8px 10px;border:1px solid #dce2ea;border-radius:6px;width:100%;">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registrar</button>
+                    </form>
+                </div>
+            </div>
+
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Cantidad</th>
+                    <th>Motivo</th>
+                    <th>Registrado</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="mv : ${movimientos}">
+                    <td th:text="${#temporals.format(mv.fecha, 'dd/MM/yyyy')}">fecha</td>
+                    <td>
+                        <span class="badge" th:classappend="${mv.tipo == 'ENTRADA'} ? 'badge-activo' : 'badge-peligro'"
+                              th:text="${mv.tipo}">ENTRADA</span>
+                    </td>
+                    <td class="moneda" th:text="${#numbers.formatDecimal(mv.cantidad, 1, 2)} + ' ' + ${material.unidad}">0.00</td>
+                    <td th:text="${mv.motivo} ?: '-'">-</td>
+                    <td th:text="${#temporals.format(mv.fechaRegistro, 'dd/MM/yyyy HH:mm')}">fecha</td>
+                </tr>
+                <tr th:if="${movimientos.isEmpty()}">
+                    <td colspan="5" style="text-align:center;color:#718096;padding:20px;">
+                        Sin movimientos registrados.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
