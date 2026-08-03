@@ -3,15 +3,16 @@ package com.fabrica.pagos.service;
 import com.fabrica.pagos.model.AsistenciaResumen;
 import com.fabrica.pagos.model.DeduccionAplicada;
 import com.fabrica.pagos.model.Empleado;
+import com.fabrica.pagos.model.Empresa;
 import com.fabrica.pagos.model.Recibo;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
+import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.awt.Color;
@@ -25,10 +26,10 @@ public class PdfService {
 
     private static final DateTimeFormatter FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    private final String moneda;
+    private final EmpresaService empresaService;
 
-    public PdfService(@Value("${app.contabilidad.moneda:C$}") String moneda) {
-        this.moneda = moneda;
+    public PdfService(EmpresaService empresaService) {
+        this.empresaService = empresaService;
     }
 
     public byte[] generarReporteNominaPdf(List<Recibo> recibos) throws Exception {
@@ -36,6 +37,8 @@ public class PdfService {
             Document document = new Document();
             PdfWriter.getInstance(document, out);
             document.open();
+
+            String moneda = agregarEncabezado(document);
 
             Font titulo = new Font(Font.HELVETICA, 16, Font.BOLD);
             Font subtitulo = new Font(Font.HELVETICA, 12, Font.BOLD);
@@ -99,6 +102,8 @@ public class PdfService {
             PdfWriter.getInstance(document, out);
             document.open();
 
+            String moneda = agregarEncabezado(document);
+
             Font titulo = new Font(Font.HELVETICA, 16, Font.BOLD);
             Font subtitulo = new Font(Font.HELVETICA, 12, Font.BOLD);
             Font normal = new Font(Font.HELVETICA, 11, Font.NORMAL);
@@ -159,6 +164,8 @@ public class PdfService {
             PdfWriter.getInstance(document, out);
             document.open();
 
+            agregarEncabezado(document);
+
             Font titulo = new Font(Font.HELVETICA, 16, Font.BOLD);
             Font subtitulo = new Font(Font.HELVETICA, 12, Font.BOLD);
             Font normal = new Font(Font.HELVETICA, 11, Font.NORMAL);
@@ -198,6 +205,51 @@ public class PdfService {
             document.close();
             return out.toByteArray();
         }
+    }
+
+    private String agregarEncabezado(Document document) throws Exception {
+        Empresa empresa = empresaService.obtener();
+        String moneda = empresa.getMoneda() == null || empresa.getMoneda().isBlank() ? "C$" : empresa.getMoneda();
+
+        if (empresa.getLogo() != null && empresa.getLogo().length > 0) {
+            try {
+                Image logo = Image.getInstance(empresa.getLogo());
+                logo.scaleToFit(50, 50);
+                logo.setAlignment(Element.ALIGN_CENTER);
+                document.add(logo);
+            } catch (Exception ignorada) {
+                // Si el logo no se puede procesar, se omite.
+            }
+        }
+
+        Paragraph nombre = new Paragraph(empresa.getNombre() == null ? "" : empresa.getNombre(),
+                new Font(Font.HELVETICA, 14, Font.BOLD));
+        nombre.setAlignment(Element.ALIGN_CENTER);
+        document.add(nombre);
+
+        StringBuilder datos = new StringBuilder();
+        if (empresa.getRuc() != null && !empresa.getRuc().isBlank()) {
+            datos.append("RUC: ").append(empresa.getRuc());
+        }
+        if (empresa.getDireccion() != null && !empresa.getDireccion().isBlank()) {
+            if (datos.length() > 0) datos.append("   |   ");
+            datos.append(empresa.getDireccion());
+        }
+        if (empresa.getTelefono() != null && !empresa.getTelefono().isBlank()) {
+            if (datos.length() > 0) datos.append("   |   ");
+            datos.append("Tel: ").append(empresa.getTelefono());
+        }
+        if (empresa.getEmail() != null && !empresa.getEmail().isBlank()) {
+            if (datos.length() > 0) datos.append("   |   ");
+            datos.append(empresa.getEmail());
+        }
+        if (datos.length() > 0) {
+            Paragraph info = new Paragraph(datos.toString(), new Font(Font.HELVETICA, 9, Font.NORMAL, new Color(90, 90, 90)));
+            info.setAlignment(Element.ALIGN_CENTER);
+            document.add(info);
+        }
+        document.add(new Paragraph(" "));
+        return moneda;
     }
 
     private void agregarDato(PdfPTable tabla, String clave, String valor, Font fuente) {

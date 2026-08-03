@@ -8,7 +8,13 @@
 </head>
 <body class="login-body">
 <div class="login-box">
-    <h1>&#127981; Sistema de Pagos</h1>
+    <h1>
+        <th:block th:if="${empresa != null and empresa.logo != null and empresa.logo.length > 0}">
+            <img th:src="@{/empresa/logo}" alt="logo" style="height:36px;vertical-align:middle;margin-right:8px;">
+        </th:block>
+        <th:block th:if="${empresa == null or empresa.logo == null or empresa.logo.length == 0}">&#127981; </th:block>
+        <span th:text="${empresa != null} ? ${empresa.nombre} : 'Sistema de Pagos'">Sistema de Pagos</span>
+    </h1>
     <div class="subtitulo">Gestión de pagos de empleados de fábrica</div>
 
     <th:block th:if="${mensajeError}">

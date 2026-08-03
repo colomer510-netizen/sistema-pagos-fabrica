@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+    <div class="panel" style="max-width:680px;">
+        <div class="panel-head">Datos de la empresa</div>
+        <div class="panel-body">
+            <form th:action="@{/empresa/guardar}" th:object="${empresa}" method="post" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="campo">
+                        <label for="nombre">Nombre de la empresa</label>
+                        <input type="text" id="nombre" th:field="*{nombre}" required>
+                    </div>
+                    <div class="campo">
+                        <label for="ruc">RUC</label>
+                        <input type="text" id="ruc" th:field="*{ruc}">
+                    </div>
+                    <div class="campo">
+                        <label for="direccion">Dirección</label>
+                        <input type="text" id="direccion" th:field="*{direccion}">
+                    </div>
+                    <div class="campo">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" id="telefono" th:field="*{telefono}">
+                    </div>
+                    <div class="campo">
+                        <label for="email">Correo electrónico</label>
+                        <input type="email" id="email" th:field="*{email}">
+                    </div>
+                    <div class="campo">
+                        <label for="moneda">Símbolo de moneda</label>
+                        <input type="text" id="moneda" th:field="*{moneda}" maxlength="6" placeholder="C$" required>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label>Logo</label>
+                    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+                        <th:block th:if="${empresa.logo != null and empresa.logo.length > 0}">
+                            <img th:src="@{/empresa/logo}" alt="logo actual" style="height:56px;border:1px solid #dce2ea;border-radius:6px;padding:4px;background:#fff;">
+                            <form th:action="@{/empresa/quitar-logo}" method="post" style="display:inline;">
+                                <button class="btn btn-danger btn-sm" type="submit">Quitar logo</button>
+                            </form>
+                        </th:block>
+                        <th:block th:if="${empresa.logo == null or empresa.logo.length == 0}">
+                            <span style="font-size:13px;color:#718096;">Sin logo cargado</span>
+                        </th:block>
+                        <input type="file" id="logoArchivo" name="logoArchivo" accept="image/*" style="flex:1;min-width:200px;">
+                    </div>
+                    <p style="font-size:12px;color:#718096;margin:6px 0 0;">
+                        El nombre, RUC, dirección, teléfono, correo, moneda y logo aparecen en el encabezado
+                        de los recibos y reportes PDF, y en la cabecera del sistema.
+                    </p>
+                </div>
+
+                <div class="form-acciones">
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

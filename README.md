@@ -18,6 +18,7 @@ Desarrollada con **Spring Boot**, **Thymeleaf**, **Spring Security**, **JPA/Hibe
 - **Deducciones configurables**: porcentaje fijo (PORCENTAJE) o impuesto sobre la renta progresivo (IR), con desglose en cada recibo y su PDF.
 - **Préstamos**: registro de préstamos por empleado, abonos manuales, liquidación y descuento automático de la cuota en la nómina.
 - **Usuarios y permisos**: roles Administrador / Solo lectura, bloqueo por intentos fallidos, forzar cambio de contraseña y expiración.
+- **Datos de la empresa**: nombre, RUC, dirección, teléfono, correo, moneda y logo editables desde la interfaz, usados en la cabecera del sistema y en el encabezado de recibos y reportes PDF.
 - **Contabilidad**: cálculo de pago mensual estimado, INSS laboral y patronal, vacaciones, aguinaldo e indemnización.
 - **Caja**: registro de ingresos y egresos por categoría, con filtro por mes, saldo del mes y saldo acumulado.
 - **Cuentas por pagar**: control de deudas con proveedores, total pendiente, vencimientos y marcado de pago.
@@ -122,6 +123,7 @@ La base de datos se crea automáticamente en `data/fabrica.db`. Los respaldos se
 | Reportes | `/reportes` |
 | Asistencia (reporte) | `/reportes/asistencia` |
 | Usuarios | `/usuarios` |
+| Datos de la empresa | `/empresa` |
 | Respaldos | `/respaldos` |
 | Tutorial | `/tutorial` |
 
@@ -143,6 +145,7 @@ src/main/resources/
 
 ## Notas
 
+- La moneda que se muestra en los recibos y reportes PDF se toma de **Datos de la empresa** (símbolo de moneda editable), no de la propiedad `app.contabilidad.moneda`.
 - El INSS laboral se puede ajustar desde la sección **Deducciones** (viene configurada al 7 %); asegúrate de tener solo una deducción de INSS activa para no descontar dos veces.
 - Los nuevos campos de la base de datos son nullable en SQLite (el driver no soporta agregar columnas `NOT NULL` sin valor por defecto); la aplicación asigna los valores por defecto en Java.
 - Haz respaldos periódicos desde **Respaldos**, especialmente antes de generar nóminas importantes.

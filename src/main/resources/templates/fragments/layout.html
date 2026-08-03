@@ -10,7 +10,13 @@
 <body>
 <div class="layout">
     <aside class="sidebar">
-        <div class="brand">&#127981; Sistema de Pagos</div>
+        <div class="brand">
+            <th:block th:if="${empresa != null and empresa.logo != null and empresa.logo.length > 0}">
+                <img th:src="@{/empresa/logo}" alt="logo" style="height:24px;vertical-align:middle;margin-right:6px;">
+            </th:block>
+            <th:block th:if="${empresa == null or empresa.logo == null or empresa.logo.length == 0}">&#127981; </th:block>
+            <span th:text="${empresa != null} ? ${empresa.nombre} : 'Sistema de Pagos'">Sistema de Pagos</span>
+        </div>
         <nav>
             <a th:href="@{/dashboard}" th:classappend="${#strings.startsWith(requestUri, '/dashboard')} ? 'activo'">Inicio</a>
             <a th:href="@{/tutorial}" th:classappend="${#strings.startsWith(requestUri, '/tutorial')} ? 'activo'">&#10067; Tutorial</a>
@@ -30,6 +36,7 @@
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/liquidaciones}" th:classappend="${#strings.startsWith(requestUri, '/liquidaciones')} ? 'activo'">Liquidaciones</a>
             <a th:href="@{/reportes}" th:classappend="${#strings.startsWith(requestUri, '/reportes')} ? 'activo'">Reportes</a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/respaldos}" th:classappend="${#strings.startsWith(requestUri, '/respaldos')} ? 'activo'">Respaldos</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/empresa}" th:classappend="${#strings.startsWith(requestUri, '/empresa')} ? 'activo'">Datos de la empresa</a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/usuarios}" th:classappend="${#strings.startsWith(requestUri, '/usuarios')} ? 'activo'">Usuarios</a>
         </nav>
         <div class="footer">
