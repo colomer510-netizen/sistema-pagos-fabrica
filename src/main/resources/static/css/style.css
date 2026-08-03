@@ -252,6 +252,69 @@ body {
     font-size: 14px;
 }
 
+/* ===== Tutorial ===== */
+.tutorial-intro {
+    background: linear-gradient(135deg, var(--azul) 0%, #16324f 100%);
+    color: #fff;
+    border-radius: 10px;
+    padding: 26px 28px;
+    margin-bottom: 22px;
+}
+
+.tutorial-intro h2 { font-size: 22px; margin-bottom: 8px; }
+.tutorial-intro p { color: #cbd5e0; line-height: 1.6; max-width: 720px; }
+
+.tutorial-contenido { max-width: 900px; }
+
+.tutorial-seccion {
+    display: flex;
+    gap: 16px;
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: 8px;
+    box-shadow: var(--sombra);
+    padding: 20px 22px;
+    margin-bottom: 16px;
+}
+
+.tutorial-numero {
+    flex: 0 0 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--azul-claro);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tutorial-cuerpo { flex: 1; }
+.tutorial-cuerpo h3 { color: var(--azul); margin-bottom: 6px; }
+.tutorial-cuerpo p { line-height: 1.6; margin-bottom: 10px; }
+.tutorial-cuerpo ol, .tutorial-cuerpo ul { margin: 8px 0 10px 22px; line-height: 1.7; }
+.tutorial-cuerpo li { margin-bottom: 3px; }
+
+.tutorial-cuerpo .tabla { margin: 10px 0; }
+
+.tutorial-nota {
+    background: #ebf8ff;
+    border-left: 4px solid var(--azul-claro);
+    color: #2c5282;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.tutorial-cuerpo code {
+    background: #edf2f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
 @media (max-width: 760px) {
     .sidebar { width: 200px; }
     .main { margin-left: 200px; padding: 16px; }

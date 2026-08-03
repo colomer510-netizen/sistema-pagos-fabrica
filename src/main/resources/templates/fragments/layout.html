@@ -13,6 +13,7 @@
         <div class="brand">&#127981; Sistema de Pagos</div>
         <nav>
             <a th:href="@{/dashboard}" th:classappend="${activo == 'dashboard'} ? 'activo'">Inicio</a>
+            <a th:href="@{/tutorial}" th:classappend="${activo == 'tutorial'} ? 'activo'">&#10067; Tutorial</a>
             <a th:href="@{/empleados}" th:classappend="${activo == 'empleados'} ? 'activo'">Empleados</a>
             <a th:href="@{/asistencia}" th:classappend="${activo == 'asistencia'} ? 'activo'">Asistencia</a>
             <a th:href="@{/nomina}" th:classappend="${activo == 'nomina'} ? 'activo'">Nómina</a>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: html}">
+<body>
+<div th:fragment="contenido">
+
+    <div class="tutorial-intro">
+        <h2>Bienvenido al Sistema de Gestión de Pagos</h2>
+        <p>
+            Esta guía te explica paso a paso cómo usar el sistema por primera vez.
+            Sigue las secciones en orden y en pocos minutos podrás registrar empleados,
+            controlar la asistencia y generar nóminas.
+        </p>
+    </div>
+
+    <div class="tutorial-contenido">
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">1</div>
+            <div class="tutorial-cuerpo">
+                <h3>Iniciar sesión</h3>
+                <p>Para entrar al sistema debes ingresar tu <strong>usuario</strong> y <strong>contraseña</strong> en la pantalla de inicio.</p>
+                <table class="tabla">
+                    <thead>
+                    <tr><th>Rol</th><th>Usuario</th><th>Contraseña</th><th>Permisos</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Administrador</td>
+                        <td>admin</td>
+                        <td>admin123</td>
+                        <td>Puede crear, editar, eliminar y exportar</td>
+                    </tr>
+                    <tr>
+                        <td>Solo lectura</td>
+                        <td>lector</td>
+                        <td>lector123</td>
+                        <td>Puede consultar y exportar, pero no modificar</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="tutorial-nota">Es importante que el administrador cambie estas contraseñas en la base de datos al iniciar el sistema en producción.</div>
+            </div>
+        </section>
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">2</div>
+            <div class="tutorial-cuerpo">
+                <h3>Registrar un empleado</h3>
+                <p>Los empleados son la base del sistema: sin ellos no puedes registrar asistencia ni generar nóminas.</p>
+                <ol>
+                    <li>Haz clic en <strong>Empleados</strong> en el menú lateral.</li>
+                    <li>Presiona el botón <span class="btn btn-primary btn-sm">+ Nuevo empleado</span>.</li>
+                    <li>Completa el formulario:
+                        <ul>
+                            <li><strong>Código único</strong>: se asigna automáticamente (EMP-001, EMP-002...).</li>
+                            <li><strong>Nombre, apellido y cédula</strong>: datos de identificación del trabajador.</li>
+                            <li><strong>Cargo y departamento</strong>: puesto que ocupa y área de la fábrica.</li>
+                            <li><strong>Tarifa por hora</strong>: el monto en córdobas (C$) que se le paga por cada hora. Es el dato más importante para el cálculo.</li>
+                            <li><strong>Horas por jornada</strong>: horas de trabajo diarias (normalmente 8).</li>
+                            <li><strong>Fecha de contratación</strong>: se usa para calcular antigüedad y prestaciones.</li>
+                        </ul>
+                    </li>
+                    <li>Presiona <span class="btn btn-primary btn-sm">Guardar</span>.</li>
+                </ol>
+                <div class="tutorial-nota">Si un empleado deja de trabajar, puedes desmarcar "Activo" en lugar de eliminarlo, para conservar su historial.</div>
+            </div>
+        </section>
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">3</div>
+            <div class="tutorial-cuerpo">
+                <h3>Registrar asistencia</h3>
+                <p>La asistencia registra las horas trabajadas por cada empleado cada día. La nómina se calcula a partir de estos registros.</p>
+                <ol>
+                    <li>Ve a <strong>Asistencia</strong> en el menú.</li>
+                    <li>Presiona <span class="btn btn-primary btn-sm">+ Registrar asistencia</span>.</li>
+                    <li>Selecciona el <strong>empleado</strong>, la <strong>fecha</strong>, las <strong>horas trabajadas</strong> y el <strong>estado</strong>:
+                        <ul>
+                            <li><strong>P</strong> = Presente</li>
+                            <li><strong>E</strong> = Enfermedad</li>
+                            <li><strong>V</strong> = Vacaciones</li>
+                            <li><strong>F</strong> = Falta</li>
+                        </ul>
+                    </li>
+                    <li>Presiona <span class="btn btn-primary btn-sm">Registrar</span>.</li>
+                </ol>
+                <p>Puedes filtrar el listado por mes usando el selector de la parte superior. Solo los días con asistencia registrada se toman en cuenta al generar la nómina.</p>
+                <div class="tutorial-nota">No se puede registrar dos veces la misma asistencia para el mismo empleado y fecha; el sistema te lo advertirá.</div>
+            </div>
+        </section>
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">4</div>
+            <div class="tutorial-cuerpo">
+                <h3>Generar una nómina</h3>
+                <p>La nómina resume el pago de todos los empleados en un periodo de tiempo.</p>
+                <ol>
+                    <li>Ve a <strong>Nómina</strong> y presiona <span class="btn btn-primary btn-sm">+ Generar nómina</span>.</li>
+                    <li>Elige la <strong>fecha de inicio</strong> y <strong>fecha de fin</strong> del periodo (por ejemplo, del 1 al 30 del mes).</li>
+                    <li>Presiona <span class="btn btn-primary btn-sm">Generar nómina</span>.</li>
+                    <li>El sistema calculará por cada empleado:
+                        <ul>
+                            <li><strong>Horas normales</strong>: las horas dentro de la jornada esperada.</li>
+                            <li><strong>Horas extras</strong>: las que exceden la jornada diaria por día laborable.</li>
+                            <li><strong>Salario bruto</strong>: horas normales + horas extras, multiplicadas por la tarifa.</li>
+                            <li><strong>INSS laboral</strong>: deducción de seguridad social (7% configurable).</li>
+                            <li><strong>Salario neto</strong>: lo que recibe el trabajador después de descuentos.</li>
+                        </ul>
+                    </li>
+                </ol>
+                <div class="tutorial-nota">No se genera una nómina doble para el mismo periodo. Si quieres corregirla, elimínala y vuelve a generarla.</div>
+            </div>
+        </section>
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">5</div>
+            <div class="tutorial-cuerpo">
+                <h3>Ver los recibos y descargar reportes</h3>
+                <p>Después de generar una nómina puedes ver los recibos individuales de cada trabajador y descargarlos.</p>
+                <ul>
+                    <li><strong>Recibo PDF</strong>: documento individual con los datos del empleado, horas y montos. Ideal para entregar al trabajador.</li>
+                    <li><strong>PDF completo</strong>: reporte de toda la nómina con el total a pagar.</li>
+                    <li><strong>Excel</strong>: hoja de cálculo con todos los recibos, útil para contabilidad.</li>
+                </ul>
+                <p>Además, en <strong>Reportes</strong> puedes descargar el listado de empleados y las nóminas en Excel o PDF con un solo clic.</p>
+            </div>
+        </section>
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">6</div>
+            <div class="tutorial-cuerpo">
+                <h3>Consultar el panel de contabilidad</h3>
+                <p>La sección <strong>Contabilidad</strong> muestra el desglose de pago y las prestaciones de cada empleado según su antigüedad.</p>
+                <ul>
+                    <li><strong>Pago mensual estimado</strong>: jornada de 30 días más horas extras, con INSS laboral y neto.</li>
+                    <li><strong>INSS patronal</strong>: el aporte que paga la empresa (22.5% configurable).</li>
+                    <li><strong>Vacaciones</strong>: 15 días de salario por cada 6 meses trabajados.</li>
+                    <li><strong>Aguinaldo</strong>: proporcional al mes de salario.</li>
+                    <li><strong>Indemnización</strong>: un mes de salario por cada año trabajado.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="tutorial-seccion">
+            <div class="tutorial-numero">7</div>
+            <div class="tutorial-cuerpo">
+                <h3>Consejos rápidos</h3>
+                <ul>
+                    <li>Registra la asistencia <strong>todos los días</strong> para que las nóminas sean exactas.</li>
+                    <li>La tarifa por hora y las horas de jornada son la clave del cálculo: revísalas al crear cada empleado.</li>
+                    <li>Usa la <strong>búsqueda</strong> en el listado de empleados para encontrar a un trabajador rápido.</li>
+                    <li>Los porcentajes (INSS laboral y patronal) se configuran en el archivo <code>application.properties</code>.</li>
+                    <li>Si algo sale mal al generar una nómina, el sistema te avisa con un mensaje: léelo con atención.</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="form-acciones">
+        <a class="btn btn-primary" th:href="@{/dashboard}">Ir al inicio</a>
+        <a class="btn btn-outline" th:href="@{/empleados}">Empezar a registrar empleados</a>
+    </div>
+</div>
+</body>
+</html>
